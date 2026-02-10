@@ -40,7 +40,7 @@ function updateLoginButton() {
     btn.innerText = "Logout";
     btn.onclick = () => {
       localStorage.clear();
-      window.location.href = "";
+      window.location.href = "index.html";
     };
   } else {
     btn.innerText = "Login / Register";
