@@ -27,5 +27,9 @@ function goLogin() {
 }
 
 function goOrders() {
-  window.location.href = "orders.html";
+  if (!isLoggedIn()) {
+    window.location.href = "login.html";
+  } else {
+    window.location.href = "orders.html";
+  }
 }
