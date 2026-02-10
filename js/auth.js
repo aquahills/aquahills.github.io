@@ -74,6 +74,12 @@ window.waitForAuth = function () {
       if (user) {
         unsub();
         resolve(user);
+      api("getUser", { email: user.email }).then(u => {
+  if (u.role === "admin") {
+    document.getElementById("adminBtn")?.style.setProperty("display","block");
+  }
+});
+
       }
     });
   });
