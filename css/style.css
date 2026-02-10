@@ -1,0 +1,55 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #eef6fb;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  background: #ffffff;
+}
+
+.logo {
+  height: 50px;
+}
+
+button {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #cce7f5;
+}
+
+.center {
+  text-align: center;
+  padding: 50px;
+}
+
+.carousel-container {
+  overflow: hidden;
+  margin: 40px;
+}
+
+.carousel {
+  display: flex;
+  gap: 20px;
+}
+
+.card {
+  min-width: 250px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.6);
+  border-radius: 15px;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
