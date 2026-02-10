@@ -54,3 +54,16 @@ function updateBadge() {
   }
 }
 updateBadge();
+function updateLoginButton() {
+  const btn = document.querySelector('nav button:last-child');
+  const user = localStorage.getItem("user");
+
+  if (btn && user) {
+    btn.innerText = "Logout";
+    btn.onclick = () => {
+      localStorage.clear();
+      location.reload();
+    };
+  }
+}
+updateLoginButton();
