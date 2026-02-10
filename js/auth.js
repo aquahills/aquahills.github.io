@@ -68,3 +68,13 @@ window.addEventListener("load", () => {
   updateLoginButton();
   updateOrderBadge();
 });
+window.waitForAuth = function () {
+  return new Promise(resolve => {
+    const unsub = firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        unsub();
+        resolve(user);
+      }
+    });
+  });
+};
