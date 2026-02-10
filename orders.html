@@ -95,6 +95,16 @@ async function updateStatus(orderId, status) {
   await api("updateOrderStatus", { orderId, status });
   location.reload();
 }
+async function assignOrder(orderId, deliveryEmail) {
+  if (!deliveryEmail) return;
+  await api("assignOrder", {
+    adminEmail: localStorage.getItem("user"),
+    orderId,
+    deliveryEmail
+  });
+  location.reload();
+}
+
 </script>
 
 
