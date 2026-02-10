@@ -9,27 +9,32 @@ firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
 
-/* Called when user clicks "Continue with Google" */
 function googleLogin() {
   const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithRedirect(provider);
 }
 
-/* Handle redirect result ONCE after login */
-auth.getRedirectResult().catch((error) => {
-  console.error("Redirect login error:", error);
+/* 🔴 FAIL-SAFE: redirect result handler */
+auth.getRedirectResult().then((result) => {
+  if (result.user) {
+    localStorage.setItem("user", result.user.email);
+    localStorage.setItem("name", result.user.displayName || "");
+    window.location.replace("/");
+  }
+}).catch(() => {
+  // ignore
 });
 
-/* Keep UI + localStorage in sync */
+/* 🔴 FAIL-SAFE: auth state watcher */
 auth.onAuthStateChanged((user) => {
   if (user) {
     localStorage.setItem("user", user.email);
     localStorage.setItem("name", user.displayName || "");
 
-    if (window.location.pathname.includes("login.html")) {
-      window.location.href = "/";
+    // Agar login page pe ho, to home bhej do
+    if (location.pathname.endsWith("/login.html")) {
+      window.location.replace("/");
     }
-
   } else {
     localStorage.removeItem("user");
     localStorage.removeItem("name");
