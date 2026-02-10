@@ -1,4 +1,4 @@
-function isLoggedIn() {
+/*function isLoggedIn() {
   return localStorage.getItem("user");
 }
 
@@ -88,3 +88,4 @@ window.safeOrderNow = async function () {
   await waitForAuth();
   orderNow();
 };
+*/
