@@ -25,7 +25,7 @@ function googleLogin() {
         role: "customer"
       });
 
-      window.location.href = "/home/";
+      window.location.href = "aquahills.github.io";
     })
     .catch((error) => {
       alert("Login failed. Please try again.");
