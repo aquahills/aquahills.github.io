@@ -43,12 +43,18 @@ header {
   top: 0;
   z-index: 10;
 }
-.hero-title {
-  font-size: 28px;
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.header-title {
+  font-size: 18px;
   font-weight: 600;
   color: var(--secondary);
-  margin-bottom: 24px;
-  text-align: center;
+  white-space: nowrap;
 }
 
 .hero-product {
