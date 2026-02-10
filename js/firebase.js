@@ -15,32 +15,20 @@ function startGoogleLogin() {
   auth.signInWithRedirect(provider);
 }
 
-/**
- * GLOBAL PROMISE: resolves only when Firebase auth is ready
- */
-window.waitForAuth = function () {
-  return new Promise(resolve => {
-    const unsub = auth.onAuthStateChanged(user => {
-      if (user) {
-        unsub();
-        resolve(user);
-      }
-    });
-  });
-};
+auth.onAuthStateChanged(user => {
+  if (user) {
+    localStorage.setItem("user", user.email);
+    localStorage.setItem("name", user.displayName || "");
 
-auth.onAuthStateChanged(async user => {
-  if (!user) return;
-
-  localStorage.setItem("user", user.email);
-  localStorage.setItem("name", user.displayName || "");
-
-  // Redirect ONLY after login.html
-  if (
-    localStorage.getItem("loginIntent") === "true" &&
-    location.pathname.endsWith("login.html")
-  ) {
-    localStorage.removeItem("loginIntent");
-    window.location.replace("index.html");
+    if (
+      localStorage.getItem("loginIntent") === "true" &&
+      location.pathname.endsWith("login.html")
+    ) {
+      localStorage.removeItem("loginIntent");
+      window.location.replace("index.html");
+    }
+  } else {
+    localStorage.removeItem("user");
+    localStorage.removeItem("name");
   }
 });
