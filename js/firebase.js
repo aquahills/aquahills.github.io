@@ -1,18 +1,27 @@
+/* =========================
+   1. GOOGLE PROJECT DETAILS
+   ========================= */
+
 const firebaseConfig = {
-  apiKey: "AIzaSyBBs9dJyBGo8Rg8i0B2TktSqfvcyGKZbr4",
+  apiKey: "AIzaSyBSs9dJyBGo8Rg8i0B2TktSqFvcyGKZbr4",
   authDomain: "aquahills-3fdcc.firebaseapp.com",
   projectId: "aquahills-3fdcc",
   storageBucket: "aquahills-3fdcc.firebasestorage.app",
   messagingSenderId: "1014475952575",
   appId: "1:1014475952575:web:5a91df107d3a376548510a"
 };
-// Start Firebase using your project details
+
+/* =========================
+   2. START GOOGLE LOGIN
+   ========================= */
+
+// Start Firebase
 firebase.initializeApp(firebaseConfig);
 
-// Get authentication service
+// Get login service
 const auth = firebase.auth();
 
-// This runs when user clicks "Continue with Google"
+// Runs when user clicks "Continue with Google"
 function googleLogin() {
   const provider = new firebase.auth.GoogleAuthProvider();
 
@@ -20,10 +29,10 @@ function googleLogin() {
     .then(async (result) => {
       const user = result.user;
 
-      // Remember who is logged in
+      // Remember logged-in user
       localStorage.setItem("user", user.email);
 
-      // Save user to Google Sheet (backend)
+      // Save user to Google Sheet
       await api("saveUser", {
         email: user.email,
         name: user.displayName || "",
