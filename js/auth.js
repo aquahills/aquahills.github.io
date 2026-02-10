@@ -4,7 +4,7 @@ function isLoggedIn() {
 
 async function orderNow() {
   if (!isLoggedIn()) {
-    window.location.href = "/login.html";
+    window.location.href = "login.html";
     return;
   }
 
@@ -12,21 +12,21 @@ async function orderNow() {
   const user = await api("getUser", { email });
 
   if (!user || !user.house) {
-    window.location.href = "/address.html";
+    window.location.href = "address.html";
   } else {
-    window.location.href = "/order.html";
+    window.location.href = "order.html";
   }
 }
 
 function goLogin() {
-  window.location.href = "/login.html";
+  window.location.href = "login.html";
 }
 
 function goOrders() {
   if (!isLoggedIn()) {
-    window.location.href = "/login.html";
+    window.location.href = "login.html";
   } else {
-    window.location.href = "/orders.html";
+    window.location.href = "orders.html";
   }
 }
 
@@ -40,7 +40,7 @@ function updateLoginButton() {
     btn.innerText = "Logout";
     btn.onclick = () => {
       localStorage.clear();
-      window.location.href = "/";
+      window.location.href = "";
     };
   } else {
     btn.innerText = "Login / Register";
