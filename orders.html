@@ -62,12 +62,21 @@
     }
 
     if (user.role === "admin") {
-      html += `
-        <p><strong>Email:</strong> ${o.email}</p>
-        <p><strong>Total:</strong> ₹${o.total}</p>
-        <p><strong>Customer:</strong> ${o.customer?.name || ""}</p>
-      `;
-    }
+  const options = deliveryUsers
+    .map(d => `<option value="${d.email}">${d.name}</option>`)
+    .join("");
+
+  html += `
+    <p><strong>Email:</strong> ${o.email}</p>
+    <p><strong>Total:</strong> ₹${o.total}</p>
+    <p><strong>Assigned To:</strong> ${o.assignedTo || "Unassigned"}</p>
+    <select onchange="assignOrder('${o.orderId}', this.value)">
+      <option value="">Assign delivery</option>
+      ${options}
+    </select>
+  `;
+}
+
 
     if (user.role !== "customer" && o.status === "Pending") {
       html += `
