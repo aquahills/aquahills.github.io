@@ -130,6 +130,14 @@ nav button:hover {
   cursor: pointer;
   position: relative;
 }
+.card p {
+  margin: 6px 0;
+}
+
+.card button {
+  margin-top: 12px;
+}
+
 
 .card::after {
   content: "";
