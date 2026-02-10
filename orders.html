@@ -84,7 +84,10 @@
 
     if (user.role !== "customer" && o.status === "Pending") {
       html += `
-        <button onclick="updateStatus('${o.orderId}','Fulfilled')">
+        <button onclick="confirmDelivered('${o.orderId}')">
+  Delivered
+</button>
+
           Mark Fulfilled
         </button>
       `;
@@ -106,6 +109,17 @@ async function assignOrder(orderId, deliveryEmail) {
     orderId,
     deliveryEmail
   });
+  location.reload();
+}
+async function confirmDelivered(orderId) {
+  const ok = confirm("Is this order delivered?");
+  if (!ok) return;
+
+  await api("updateOrderStatus", {
+    orderId,
+    status: "Delivered"
+  });
+
   location.reload();
 }
 
