@@ -21,6 +21,8 @@
 
 <script src="js/api.js"></script>
 <script>
+  let deliveryUsers = [];
+
 (async () => {
   const email = localStorage.getItem("user");
   const user = await api("getUser", { email });
@@ -36,6 +38,7 @@
 
   const res = await api("getAllUsers", { email });
   const users = res.users || [];
+  deliveryUsers = users.filter(u => u.role === "delivery");
   const container = document.getElementById("users");
 
   users.forEach(u => {
