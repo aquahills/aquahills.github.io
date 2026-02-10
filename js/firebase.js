@@ -25,6 +25,11 @@ auth.onAuthStateChanged((user) => {
   if (user) {
     localStorage.setItem("user", user.email);
     localStorage.setItem("name", user.displayName || "");
+
+    if (window.location.pathname.includes("login.html")) {
+      window.location.href = "/";
+    }
+
   } else {
     localStorage.removeItem("user");
     localStorage.removeItem("name");
