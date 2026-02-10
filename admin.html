@@ -4,18 +4,73 @@
   <title>Admin Panel</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="center">
 
-<h2>Admin Controls</h2>
+<h2>Admin Panel</h2>
 
-<label>Price per Bottle</label>
-<input type="number" id="price">
-<button onclick="updatePrice()">Update</button>
+<section>
+  <h3>Price Control</h3>
+  <input id="priceInput" type="number">
+  <button onclick="updatePrice()">Update Price</button>
+</section>
 
-<h3>Orders</h3>
-<div id="adminOrders"></div>
+<section>
+  <h3>User Management</h3>
+  <div id="users"></div>
+</section>
 
-<script src="js/admin.js"></script>
-<script src="js/storage.js"></script>
+<script src="js/api.js"></script>
+<script>
+(async () => {
+  const email = localStorage.getItem("user");
+  const user = await api("getUser", { email });
+
+  if (user.role !== "admin") {
+    alert("Unauthorized");
+    window.location.href = "index.html";
+    return;
+  }
+
+  const settings = await api("getSettings");
+  document.getElementById("priceInput").value = settings.price;
+
+  const res = await api("getAllUsers", { email });
+  const users = res.users || [];
+  const container = document.getElementById("users");
+
+  users.forEach(u => {
+    const div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+      <p><strong>${u.name}</strong> (${u.email})</p>
+      <p>Role:
+        <select onchange="changeRole('${u.email}', this.value)">
+          <option ${u.role === "customer" ? "selected" : ""}>customer</option>
+          <option ${u.role === "delivery" ? "selected" : ""}>delivery</option>
+          <option ${u.role === "admin" ? "selected" : ""}>admin</option>
+        </select>
+      </p>
+    `;
+    container.appendChild(div);
+  });
+})();
+
+async function changeRole(userEmail, role) {
+  await api("updateUserRole", {
+    adminEmail: localStorage.getItem("user"),
+    userEmail,
+    role
+  });
+  alert("Role updated");
+}
+
+async function updatePrice() {
+  const price = document.getElementById("priceInput").value;
+  await api("saveSetting", { key: "price", value: price });
+  alert("Price updated");
+}
+</script>
+
 </body>
 </html>
