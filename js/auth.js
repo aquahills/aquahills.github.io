@@ -78,3 +78,20 @@ function updateLoginButton() {
   }
 }
 updateLoginButton();
+async function updateOrderBadge() {
+  const badge = document.getElementById("orderBadge");
+  const email = localStorage.getItem("user");
+
+  if (!badge || !email) return;
+
+  const res = await api("getUnseenCount", { email });
+
+  if (res.count > 0) {
+    badge.innerText = res.count;
+    badge.classList.remove("hidden");
+  } else {
+    badge.classList.add("hidden");
+  }
+}
+
+updateOrderBadge();
