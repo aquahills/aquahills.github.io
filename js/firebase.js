@@ -25,7 +25,7 @@ function googleLogin() {
         role: "customer"
       });
 
-      window.location.href = "../index.html";
+      window.location.href = "index.html";
     })
     .catch((error) => {
       alert("Login failed. Please try again.");
