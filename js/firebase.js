@@ -9,16 +9,24 @@ firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
 
+/* Called when user clicks "Continue with Google" */
 function googleLogin() {
   const provider = new firebase.auth.GoogleAuthProvider();
-  firebase.auth().signInWithRedirect(provider);
+  auth.signInWithRedirect(provider);
 }
 
-firebase.auth().onAuthStateChanged((user) => {
+/* Handle redirect result ONCE after login */
+auth.getRedirectResult().catch((error) => {
+  console.error("Redirect login error:", error);
+});
+
+/* Keep UI + localStorage in sync */
+auth.onAuthStateChanged((user) => {
   if (user) {
     localStorage.setItem("user", user.email);
-    // Optional: store name
     localStorage.setItem("name", user.displayName || "");
+  } else {
+    localStorage.removeItem("user");
+    localStorage.removeItem("name");
   }
-})
-
+});
