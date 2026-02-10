@@ -188,3 +188,18 @@ p {
   top: -8px;
   right: -8px;
 }
+header,
+.carousel-container,
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+header {
+  justify-content: space-between;
+}
+
+.carousel {
+  justify-content: center;
+}
