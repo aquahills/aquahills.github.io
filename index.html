@@ -7,16 +7,19 @@
 </head>
 <body>
 
-<header>
-  <img src="assets/logo.png" class="logo">
-  <nav>
-    <button onclick="goOrders()" class="orders-btn">
-  Orders
-  <span id="orderBadge" class="badge hidden"></span>
-</button>
+<header class="header">
+  <img src="assets/logo.png" class="logo" />
 
+  <nav class="nav">
+    <button class="orders-btn" onclick="goOrders()">
+      Orders
+      <span id="orderBadge" class="badge hidden"></span>
+    </button>
+
+    <button onclick="goLogin()">Login / Register</button>
   </nav>
 </header>
+
 
 <section class="carousel-container">
   <div class="carousel" id="carousel">
