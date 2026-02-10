@@ -5,11 +5,39 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
-<h2>Your Orders</h2>
+<h2>Orders</h2>
 <div id="orders"></div>
 
 <script src="js/storage.js"></script>
 <script src="js/auth.js"></script>
+<script>
+const user = localStorage.getItem("user");
+const orders = getAllOrders();
+const container = document.getElementById("orders");
+const isAdmin = user === "aquahillsbeverages@gmail.com";
+
+orders.forEach((o, i) => {
+  if (!isAdmin && o.email !== user) return;
+
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <p><strong>${o.email}</strong></p>
+    <p>Bottles: ${o.qty}</p>
+    <p>Total: ₹${o.total}</p>
+    <p>Status: ${o.status}</p>
+    ${isAdmin && o.status === "Pending" 
+      ? `<button onclick="fulfill(${i})">Mark Fulfilled</button>` 
+      : ""}
+    <hr>
+  `;
+  container.appendChild(div);
+});
+function fulfill(index) {
+  orders[index].status = "Fulfilled";
+  updateOrders(orders);
+  location.reload();
+}
+</script>
+
 </body>
 </html>
