@@ -78,3 +78,7 @@ window.waitForAuth = function () {
     });
   });
 };
+window.safeOrderNow = async function () {
+  await waitForAuth();
+  orderNow();
+};
