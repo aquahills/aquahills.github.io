@@ -14,16 +14,11 @@ function googleLogin() {
   firebase.auth().signInWithRedirect(provider);
 }
 
-firebase.auth().getRedirectResult()
-  .then((result) => {
-    if (result.user) {
-      const email = result.user.email;
-      localStorage.setItem("user", email);
-      window.location.href = "/";
-    }
-  })
-  .catch((error) => {
-    console.error(error);
-    alert("Login failed. Please try again.");
-  });
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    localStorage.setItem("user", user.email);
+    // Optional: store name
+    localStorage.setItem("name", user.displayName || "");
+  }
+})
 
