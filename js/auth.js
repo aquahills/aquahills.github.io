@@ -1,3 +1,5 @@
+importScripts = importScripts || function(){};
+
 const ADMIN_EMAIL = "aquahillsbeverages@gmail.com";
 
 function login() {
