@@ -1,24 +1,64 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Order Water</title>
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body class="center">
+let price = 75; // default fallback
 
-<h2>Select Bottles</h2>
+document.addEventListener("DOMContentLoaded", async () => {
 
-<input type="number" id="qty" min="1" value="1">
-<p>Total Price: ₹<span id="total">0</span></p>
+  const qtyInput = document.getElementById("qty");
+  const totalEl = document.getElementById("total");
 
-<button onclick="confirmOrder()">Confirm Order</button>
+  // Show default price immediately
+  totalEl.innerText = qtyInput.value * price;
 
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  firebase.auth().onAuthStateChanged(async (user) => {
 
-<script src="js/firebase.js"></script>
-<script src="js/api.js"></script>
-<script src="js/order.js"></script>
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
 
-</body>
-</html>
+    try {
+
+      const settings = await api("getSettings");
+
+      if (!settings.error && settings.price) {
+        price = Number(settings.price);
+      }
+
+      totalEl.innerText = qtyInput.value * price;
+
+      qtyInput.addEventListener("input", e => {
+        totalEl.innerText = e.target.value * price;
+      });
+
+    } catch (err) {
+      console.error(err);
+      alert("Unable to fetch price.");
+    }
+
+  });
+});
+
+async function confirmOrder() {
+
+  const qty = Number(document.getElementById("qty").value);
+
+  if (!qty || qty <= 0) {
+    alert("Invalid quantity");
+    return;
+  }
+
+  try {
+
+    const res = await api("createOrder", { bottles: qty });
+
+    if (res.error) {
+      alert(res.error);
+      return;
+    }
+
+    alert("Order placed successfully");
+    window.location.href = "orders.html";
+
+  } catch (err) {
+    alert("Order failed. Try again.");
+  }
+}
