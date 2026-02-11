@@ -5,85 +5,71 @@
   <title>Aquahills Beverages</title>
   <link rel="stylesheet" href="css/style.css">
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-
-
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 </head>
+
 <body>
 
 <header class="header">
-  
-  <img src="assets/logo.png" class="logo" />
-<h1 class="hero-title">
-  Premium Drinking Water for Home and Business
-</h1>
+  <div class="header-left">
+    <img src="assets/logo.png" class="logo" />
+  </div>
+
   <nav class="nav">
-    <button id="adminBtn" onclick="goAdmin()" style="display:none">
-  ⚙️
-</button>
-
-    <button class="orders-btn" onclick="goOrders()">
-      Orders
-      <span id="orderBadge" class="badge hidden"></span>
-    </button>
-
-    <button onclick="window.location.href='login.html'">
-  Login / Register
-</button>
-
-
+    <button id="adminBtn" onclick="goAdmin()" style="display:none">⚙️</button>
+    <button class="orders-btn" onclick="goOrders()">Orders</button>
+    <button onclick="window.location.href='login.html'">Login</button>
   </nav>
 </header>
 
-<section class="hero-product">
-  <img
-    src="assets/20l-bottle.png"
-    alt="Aquahills Mineral Water Bottle"
-  />
+<section class="hero">
+  <div class="hero-overlay">
+    <h1>Premium Drinking Water for Home & Business</h1>
+    <button onclick="safeOrderNow()" class="primary-btn">Order Now</button>
+  </div>
 </section>
 
 <section class="carousel-container">
-  <div class="carousel" id="carousel">
+  <div class="carousel">
 
-    <div class="card primary-cta" onclick="safeOrderNow()">
-  <h2>Home & Business Water Delivery</h2>
+    <div class="card">
+      <h2>Advanced Purification</h2>
+      <p>RO, UV and Ozonization process ensures complete safety and mineral balance.</p>
+    </div>
 
-  <p>
-    Pure, certified mineral water delivered reliably for everyday consumption
-    and commercial needs.
-  </p>
-</div>
+    <div class="card">
+      <h2>Reliable Delivery</h2>
+      <p>Timely doorstep delivery for homes, offices and commercial establishments.</p>
+    </div>
 
-<div class="card">
-  <h2>Quality You Can Trust</h2>
-  <p>
-    Our water undergoes advanced RO, UV, and mineral balancing processes
-    to ensure optimal purity and essential mineral retention.
-  </p>
-  <p>
-    Every batch meets strict quality standards before dispatch.
-  </p>
-</div>
-
-<div class="card">
-  <h2>Quality You Can Trust</h2>
-
-  <p>
-    RO purification combined with UV treatment and ozonized disinfection
-    ensures consistent purity and safety.
-  </p>
-
-  <p>
-    Certified to BIS standards and compliant with ISI quality requirements.
-  </p>
-</div>
-
+    <div class="card">
+      <h2>Certified Quality</h2>
+      <p>BIS compliant and quality tested before every dispatch.</p>
+    </div>
 
   </div>
 </section>
 
+<footer class="footer">
+  <div class="footer-container">
+    <div>
+      <h3>Aquahills Beverages</h3>
+      <p>Pure & Safe Drinking Water</p>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <p>Phone: +91 9876543210</p>
+      <p>Email: support@aquahills.com</p>
+    </div>
+    <div>
+      <h4>Address</h4>
+      <p>Ghaziabad, Uttar Pradesh</p>
+    </div>
+  </div>
+  <p class="footer-bottom">© 2026 Aquahills Beverages. All Rights Reserved.</p>
+</footer>
 
-<script src="js/carousel.js"></script>
+<script src="js/firebase.js"></script>
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
 
