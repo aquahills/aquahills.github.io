@@ -1,65 +1,110 @@
-let price = 75;
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Your Orders</title>
+  <link rel="stylesheet" href="css/style.css">
 
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+</head>
+
+<body>
+
+<header>
+  <img src="assets/logo.png" class="logo" />
+  <nav>
+    <button onclick="window.location.href='order.html'">Order Now</button>
+    <button onclick="window.location.href='index.html'">Home</button>
+  </nav>
+</header>
+
+<main class="center" id="contentArea"></main>
+
+<footer class="footer">
+  <div class="footer-container">
+    <div>
+      <h3>Aquahills Beverages</h3>
+      <p>Pure & Safe Drinking Water</p>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <p>Phone: +91 9876543210</p>
+      <p>Email: support@aquahills.com</p>
+    </div>
+    <div>
+      <h4>Location</h4>
+      <p>Ghaziabad, Uttar Pradesh</p>
+    </div>
+  </div>
+  <p class="footer-bottom">© 2026 Aquahills Beverages</p>
+</footer>
+
+<script src="js/firebase.js"></script>
+<script src="js/api.js"></script>
+
+<script>
 document.addEventListener("DOMContentLoaded", () => {
+
+  const content = document.getElementById("contentArea");
 
   firebase.auth().onAuthStateChanged(async (user) => {
 
     if (!user) {
-      window.location.href = "login.html";
+      content.innerHTML = `
+        <div class="card">
+          <h2>You are not logged in</h2>
+          <button onclick="window.location.href='login.html'" class="primary-btn">
+            Login
+          </button>
+        </div>
+      `;
       return;
     }
 
-    const qtyInput = document.getElementById("qty");
-    const totalEl = document.getElementById("total");
-
     try {
 
-      const settings = await api("getSettings");
+      const res = await api("getOrders");
 
-      if (!settings.error && settings.price) {
-        price = Number(settings.price);
+      if (!res || res.error) {
+        showEmptyState();
+        return;
       }
 
+      const orders = Array.isArray(res.orders) ? res.orders : [];
+
+      if (orders.length === 0) {
+        showEmptyState();
+        return;
+      }
+
+      content.innerHTML = orders.map(o => `
+        <div class="card">
+          <p><strong>Status:</strong> ${o.status}</p>
+          <p><strong>Bottles:</strong> ${o.bottles}</p>
+          <p><strong>Total:</strong> ₹${o.total}</p>
+          <p>${new Date(o.createdAt).toLocaleString()}</p>
+        </div>
+      `).join("");
+
     } catch (e) {
-      console.error("Price fetch failed. Using fallback.");
-    }
-
-    updateTotal();
-
-    qtyInput.addEventListener("input", updateTotal);
-
-    function updateTotal() {
-      const qty = Number(qtyInput.value || 1);
-      totalEl.innerText = qty * price;
+      showEmptyState();
     }
 
   });
 
+  function showEmptyState() {
+    content.innerHTML = `
+      <div class="card">
+        <h2>You have not placed any orders</h2>
+        <button onclick="window.location.href='order.html'" class="primary-btn">
+          Order Now
+        </button>
+      </div>
+    `;
+  }
+
 });
+</script>
 
-async function confirmOrder() {
-
-  const qty = Number(document.getElementById("qty").value);
-
-  if (!qty || qty <= 0) {
-    alert("Invalid quantity");
-    return;
-  }
-
-  try {
-
-    const res = await api("createOrder", { bottles: qty });
-
-    if (res.error) {
-      alert(res.error);
-      return;
-    }
-
-    alert("Order placed successfully");
-    window.location.href = "orders.html";
-
-  } catch (err) {
-    console.error(err);
-    alert("Order failed. Try again.");
-  }
-}
+</body>
+</html>
