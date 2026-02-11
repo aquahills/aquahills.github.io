@@ -249,7 +249,7 @@ margin-top:20px
 <button onclick="navigate('dashboard')">Dashboard</button>
 <button onclick="navigate('ordersSummary')">Orders</button>
 <button onclick="navigate('users')">Users</button>
-<button onclick="navigate('settings')">Settings</button>
+<button onclick="navigate('settings')">Pricing</button>
 <button onclick="logout()">Logout</button>
 </div>
 
@@ -563,7 +563,7 @@ const price=doc.data()?.price||75
 
 contentArea.innerHTML=`
 <div class="admin-card">
-<h2>Settings</h2>
+<h2>Bottle Pricing</h2>
 <div style="display:flex;gap:15px;margin-top:20px;justify-content:center;align-items:center;">
 <input type="number" id="priceInput" value="${price}" style="width:200px;">
 <button class="theme-btn" onclick="savePrice()">Save</button>
