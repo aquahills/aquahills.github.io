@@ -6,7 +6,9 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+
 const auth = firebase.auth();
+const db = firebase.firestore();
 
 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
@@ -18,29 +20,30 @@ function startGoogleLogin() {
 
       const user = result.user;
 
-      localStorage.setItem("user", user.email);
-      localStorage.setItem("name", user.displayName || "");
+      // Create user document if not exists
+      const userRef = db.collection("users").doc(user.uid);
+      const doc = await userRef.get();
 
-      try {
-        await api("saveUser", {
-          name: user.displayName || ""
+      if (!doc.exists) {
+        await userRef.set({
+          email: user.email,
+          name: user.displayName || "",
+          phone: "",
+          address: {
+            house: "",
+            street: "",
+            city: "",
+            pincode: ""
+          },
+          role: "customer",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-      } catch (err) {
-        console.error("Backend save failed:", err);
       }
 
       window.location.href = "index.html";
     })
     .catch(err => {
       console.error(err);
-      alert("Login failed. Check Firebase authorized domains.");
+      alert("Login failed.");
     });
 }
-
-auth.onAuthStateChanged(user => {
-  if (user) {
-    localStorage.setItem("user", user.email);
-  } else {
-    localStorage.removeItem("user");
-  }
-});
