@@ -12,9 +12,7 @@
 
 <header>
   <img src="assets/logo.png" class="logo" />
-  <nav id="navArea">
-    <!-- dynamic -->
-  </nav>
+  <nav id="navArea"></nav>
 </header>
 
 <main class="center" id="contentArea"></main>
@@ -57,11 +55,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const profile = await api("getUser");
 
     if (!profile || profile.error) {
-      content.innerHTML = "<h2>Profile not found</h2>";
+      content.innerHTML = "<h2>Error loading profile</h2>";
       return;
     }
 
-    // NAVIGATION
     nav.innerHTML = `
       ${profile.role === "admin" ? 
         `<button onclick="window.location.href='admin.html'">⚙</button>` : ""}
@@ -69,38 +66,15 @@ document.addEventListener("DOMContentLoaded", () => {
       <button onclick="window.location.href='index.html'">Home</button>
     `;
 
-    // FETCH ORDERS
-    let ordersData;
+    let res;
 
     if (profile.role === "admin" || profile.role === "delivery") {
-
-      // get all users first
-      const allUsers = await api("getAllUsers");
-
-      const allOrders = [];
-
-      for (const u of allUsers.users) {
-        const userOrders = await api("getOrders", { email: u.email });
-        if (userOrders.orders) {
-          userOrders.orders.forEach(o => {
-            allOrders.push({
-              ...o,
-              email: u.email
-            });
-          });
-        }
-      }
-
-      ordersData = allOrders;
-
+      res = await api("getAllOrders");
     } else {
-
-      const res = await api("getOrders");
-      ordersData = res.orders || [];
-
+      res = await api("getOrders");
     }
 
-    if (!ordersData.length) {
+    if (!res.orders || res.orders.length === 0) {
       content.innerHTML = `
         <div class="card">
           <h2>No Orders Found</h2>
@@ -109,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    content.innerHTML = ordersData.map(o => `
+    content.innerHTML = res.orders.map(o => `
       <div class="card">
         ${profile.role !== "customer" ? `<p><strong>User:</strong> ${o.email}</p>` : ""}
         <p><strong>Status:</strong> ${o.status}</p>
