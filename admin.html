@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="css/style.css">
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <style>
+    body { margin:0; display:flex; font-family:Arial; }
+    .sidebar {
+      width:220px;
+      background:#111;
+      color:white;
+      height:100vh;
+      padding:20px;
+      box-sizing:border-box;
+    }
+    .sidebar h2 { margin-bottom:30px; }
+    .sidebar button {
+      width:100%;
+      padding:10px;
+      margin-bottom:10px;
+      background:#222;
+      border:none;
+      color:white;
+      border-radius:8px;
+      cursor:pointer;
+    }
+    .sidebar button:hover { background:#333; }
+
+    .content {
+      flex:1;
+      padding:30px;
+      background:#f4f4f4;
+      overflow:auto;
+    }
+
+    .card {
+      background:white;
+      padding:20px;
+      border-radius:12px;
+      margin-bottom:20px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    table {
+      width:100%;
+      border-collapse:collapse;
+    }
+
+    th, td {
+      padding:10px;
+      border-bottom:1px solid #ddd;
+      text-align:left;
+    }
+
+    .primary-btn {
+      padding:8px 12px;
+      border:none;
+      background:#007bff;
+      color:white;
+      border-radius:6px;
+      cursor:pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+  <h2>Admin</h2>
+  <button onclick="showSection('dashboard')">Dashboard</button>
+  <button onclick="showSection('orders')">Orders</button>
+  <button onclick="showSection('users')">Users</button>
+  <button onclick="showSection('settings')">Settings</button>
+  <button onclick="logout()">Logout</button>
+</div>
+
+<div class="content" id="contentArea">
+  Loading...
+</div>
+
+<script src="js/firebase.js"></script>
+
+<script>
+let currentUser;
+
+firebase.auth().onAuthStateChanged(async (user) => {
+
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  const doc = await db.collection("users").doc(user.uid).get();
+  const role = doc.data()?.role;
+
+  if (role !== "admin") {
+    window.location.href = "index.html";
+    return;
+  }
+
+  currentUser = user;
+  showSection('dashboard');
+});
+
+
+function logout() {
+  firebase.auth().signOut().then(() => {
+    window.location.href = "index.html";
+  });
+}
+
+
+function showSection(section) {
+  if (section === 'dashboard') loadDashboard();
+  if (section === 'orders') loadOrders();
+  if (section === 'users') loadUsers();
+  if (section === 'settings') loadSettings();
+}
+
+
+/* ================= DASHBOARD ================= */
+
+async function loadDashboard() {
+
+  const ordersSnapshot = await db.collection("orders").get();
+  const usersSnapshot = await db.collection("users").get();
+
+  document.getElementById("contentArea").innerHTML = `
+    <div class="card">
+      <h2>Dashboard</h2>
+      <p>Total Orders: ${ordersSnapshot.size}</p>
+      <p>Total Users: ${usersSnapshot.size}</p>
+    </div>
+  `;
+}
+
+
+/* ================= ORDERS ================= */
+
+async function loadOrders() {
+
+  const snapshot = await db.collection("orders")
+    .orderBy("createdAt", "desc")
+    .get();
+
+  let rows = "";
+
+  snapshot.forEach(doc => {
+    const o = doc.data();
+    rows += `
+      <tr>
+        <td>${doc.id}</td>
+        <td>${o.customerEmail}</td>
+        <td>${o.bottles}</td>
+        <td>${o.status}</td>
+        <td>
+          <button class="primary-btn" onclick="markDelivered('${doc.id}')">
+            Mark Delivered
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+
+  document.getElementById("contentArea").innerHTML = `
+    <div class="card">
+      <h2>All Orders</h2>
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>Email</th>
+          <th>Bottles</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+        ${rows}
+      </table>
+    </div>
+  `;
+}
+
+async function markDelivered(orderId) {
+  await db.collection("orders").doc(orderId).update({
+    status: "Delivered"
+  });
+  loadOrders();
+}
+
+
+/* ================= USERS ================= */
+
+async function loadUsers() {
+
+  const snapshot = await db.collection("users").get();
+
+  let rows = "";
+
+  for (const doc of snapshot.docs) {
+
+    const data = doc.data();
+
+    const latestOrder = await db.collection("orders")
+      .where("customerId", "==", doc.id)
+      .orderBy("createdAt", "desc")
+      .limit(1)
+      .get();
+
+    let latestOrderId = "-";
+
+    if (!latestOrder.empty) {
+      latestOrderId = latestOrder.docs[0].id;
+    }
+
+    rows += `
+      <tr>
+        <td>${data.name || "-"}</td>
+        <td>${data.phone || "-"}</td>
+        <td>${latestOrderId}</td>
+        <td>
+          <button class="primary-btn" onclick="editUser('${doc.id}')">
+            Edit
+          </button>
+        </td>
+      </tr>
+    `;
+  }
+
+  document.getElementById("contentArea").innerHTML = `
+    <div class="card">
+      <h2>Users</h2>
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Latest Order</th>
+          <th>Action</th>
+        </tr>
+        ${rows}
+      </table>
+    </div>
+  `;
+}
+
+function editUser(userId) {
+  window.location.href = "address.html?edit=" + userId;
+}
+
+
+/* ================= SETTINGS ================= */
+
+async function loadSettings() {
+
+  const doc = await db.collection("settings").doc("global").get();
+  const data = doc.data() || {};
+
+  document.getElementById("contentArea").innerHTML = `
+    <div class="card">
+      <h2>Settings</h2>
+      <label>Bottle Price:</label><br><br>
+      <input type="number" id="priceInput" value="${data.price || 75}">
+      <br><br>
+      <button class="primary-btn" onclick="savePrice()">
+        Save
+      </button>
+    </div>
+  `;
+}
+
+async function savePrice() {
+
+  const price = Number(document.getElementById("priceInput").value);
+
+  await db.collection("settings").doc("global").update({
+    price: price
+  });
+
+  alert("Price Updated");
+}
+</script>
+
+</body>
+</html>
