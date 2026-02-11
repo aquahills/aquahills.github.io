@@ -5,22 +5,28 @@ const firebaseConfig = {
   appId: "1:1014475952575:web:5a91df107d3a376548510a"
 };
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
+// DEBUG AUTH
+auth.onAuthStateChanged((user) => {
+  console.log("Auth state:", user ? user.email : "No user");
+});
+
 function startGoogleLogin() {
   const provider = new firebase.auth.GoogleAuthProvider();
 
   auth.signInWithPopup(provider)
-    .then(async result => {
+    .then(async (result) => {
 
       const user = result.user;
 
-      // Create user document if not exists
       const userRef = db.collection("users").doc(user.uid);
       const doc = await userRef.get();
 
@@ -40,10 +46,11 @@ function startGoogleLogin() {
         });
       }
 
+      console.log("Login success");
       window.location.href = "index.html";
     })
     .catch(err => {
-      console.error(err);
+      console.error("Login error:", err);
       alert("Login failed.");
     });
 }
