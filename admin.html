@@ -2,173 +2,203 @@
 <html>
 <head>
   <title>Admin Panel</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/style.css">
 
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-<style>
-body { margin:0; overflow-x:hidden; }
+  <style>
+    body { margin:0; overflow-x:hidden; }
 
-/* TOPBAR */
-.topbar{
-  height:65px;
-  display:flex;
-  align-items:center;
-  padding:0 20px;
-  background:rgba(0,0,0,0.35);
-  backdrop-filter:blur(10px);
-}
-.menu-btn{ font-size:24px; cursor:pointer; margin-right:15px; }
+    .topbar{
+      height:65px;
+      display:flex;
+      align-items:center;
+      padding:0 20px;
+      background:rgba(0,0,0,0.25);
+      backdrop-filter:blur(10px);
+    }
 
-/* SIDEBAR */
-.sidebar{
-  position:fixed;
-  left:-250px;
-  top:0;
-  width:240px;
-  height:100%;
-  background:linear-gradient(180deg,#062c5c,#0a5fd8);
-  padding:25px 15px;
-  transition:.3s;
-  z-index:1001;
-}
-.sidebar.active{ left:0; }
-.sidebar button{
-  width:100%;
-  padding:12px;
-  margin-bottom:12px;
-  border-radius:25px;
-  border:1px solid rgba(255,255,255,.3);
-  background:transparent;
-  color:white;
-  font-weight:600;
-  cursor:pointer;
-}
-.sidebar button:hover{
-  background:white;
-  color:#0a5fd8;
-}
+    .menu-btn{ font-size:24px; cursor:pointer; margin-right:15px; }
 
-.overlay{
-  position:fixed;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,.4);
-  display:none;
-  z-index:1000;
-}
-.overlay.active{ display:block; }
+    .sidebar{
+      position:fixed;
+      left:-260px;
+      top:0;
+      width:240px;
+      height:100%;
+      background:linear-gradient(180deg,#062c5c,#0a5fd8);
+      padding:25px 20px;
+      transition:.3s;
+      z-index:1001;
+    }
 
-/* CONTENT */
-.content{
-  display:flex;
-  justify-content:center;
-  padding:30px 15px 60px;
-  min-height:calc(100vh - 65px);
-}
+    .sidebar.active{ left:0; }
 
-.admin-card{
-  width:100%;
-  max-width:1200px;
-  background:rgba(255,255,255,.18);
-  backdrop-filter:blur(15px);
-  padding:25px;
-  border-radius:18px;
-  box-shadow:0 10px 30px rgba(0,0,0,.3);
-}
+    .sidebar button{
+      width:100%;
+      padding:12px;
+      margin-bottom:12px;
+      border-radius:25px;
+      border:1px solid rgba(255,255,255,.3);
+      background:transparent;
+      color:white;
+      font-weight:600;
+      cursor:pointer;
+    }
 
-/* FILTER ROW */
-.filter-row{
-  display:flex;
-  gap:15px;
-  flex-wrap:wrap;
-  margin-bottom:20px;
-}
+    .sidebar button:hover{ background:white; color:#0a5fd8; }
 
-.filter-row input,
-.filter-row select{
-  padding:8px 12px;
-  border-radius:8px;
-  border:none;
-}
+    .overlay{
+      position:fixed;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,.4);
+      display:none;
+      z-index:1000;
+    }
 
-/* TABLE */
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-th,td{
-  padding:12px;
-  border-bottom:1px solid rgba(255,255,255,.2);
-}
-th{ text-align:left; }
+    .overlay.active{ display:block; }
 
-.action-btn{
-  padding:6px 12px;
-  border:none;
-  border-radius:15px;
-  cursor:pointer;
-  font-weight:600;
-}
-.edit-btn{ background:white; color:#0a5fd8; }
-.delete-btn{ background:#ff4d4d; color:white; }
+    .content{
+      padding:20px;
+      min-height:calc(100vh - 65px);
+      display:flex;
+      justify-content:center;
+    }
 
-/* PAGINATION */
-.pagination{
-  margin-top:20px;
-  display:flex;
-  justify-content:center;
-  gap:10px;
-}
-.pagination button{
-  padding:6px 12px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-}
+    .wrapper{
+      width:100%;
+      max-width:1200px;
+    }
 
-/* MODAL */
-.modal{
-  position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background:rgba(0,0,0,.6);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:2000;
-}
-.modal-content{
-  background:white;
-  color:#062c5c;
-  padding:25px;
-  border-radius:15px;
-  width:90%;
-  max-width:400px;
-  text-align:center;
-}
-.modal-content button{
-  margin:10px;
-  padding:8px 18px;
-  border:none;
-  border-radius:20px;
-  cursor:pointer;
-}
+    .card{
+      background:rgba(255,255,255,.15);
+      backdrop-filter:blur(15px);
+      padding:25px;
+      border-radius:18px;
+      box-shadow:0 8px 30px rgba(0,0,0,.3);
+      margin-bottom:25px;
+    }
 
-/* MOBILE VIEW */
-@media(max-width:768px){
-  table{ display:none; }
-  .mobile-card{
-    background:rgba(255,255,255,.2);
-    padding:15px;
-    border-radius:15px;
-    margin-bottom:15px;
-  }
-}
-</style>
+    .dashboard-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:20px;
+      text-align:center;
+    }
+
+    .stat{
+      padding:25px;
+      border-radius:15px;
+      background:rgba(255,255,255,.2);
+    }
+
+    .stat h3{ margin:0; font-size:28px; }
+
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:15px;
+      margin-bottom:20px;
+    }
+
+    input,select{
+      padding:8px;
+      border-radius:8px;
+      border:none;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+    }
+
+    th,td{
+      padding:12px;
+      border-bottom:1px solid rgba(255,255,255,.2);
+      text-align:left;
+    }
+
+    .action-btn{
+      padding:6px 12px;
+      border-radius:15px;
+      border:none;
+      cursor:pointer;
+      font-weight:600;
+    }
+
+    .edit-btn{ background:white; color:#0a5fd8; }
+    .delete-btn{ background:#ff4d4d; color:white; }
+
+    .pagination{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      margin-top:20px;
+    }
+
+    .pagination button{
+      padding:6px 12px;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+    }
+
+    .modal{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,.6);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:2000;
+    }
+
+    .modal-content{
+      background:white;
+      color:black;
+      padding:25px;
+      border-radius:12px;
+      text-align:center;
+      width:90%;
+      max-width:350px;
+    }
+
+    @media(max-width:768px){
+
+      .content{ padding:15px; }
+
+      table thead{ display:none; }
+
+      table,tbody,tr,td{
+        display:block;
+        width:100%;
+      }
+
+      tr{
+        margin-bottom:15px;
+        background:rgba(255,255,255,.15);
+        padding:10px;
+        border-radius:12px;
+      }
+
+      td{
+        border:none;
+        padding:6px 0;
+      }
+
+      td::before{
+        font-weight:bold;
+        display:block;
+      }
+
+    }
+  </style>
 </head>
 
 <body>
@@ -179,20 +209,22 @@ th{ text-align:left; }
 </div>
 
 <div class="sidebar" id="sidebar">
+  <button onclick="navigate('dashboard')">Dashboard</button>
+  <button onclick="navigate('orders')">Orders</button>
   <button onclick="navigate('users')">Users</button>
+  <button onclick="navigate('settings')">Settings</button>
   <button onclick="logout()">Logout</button>
 </div>
 
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <div class="content">
-  <div class="admin-card" id="contentArea">Loading...</div>
+  <div class="wrapper" id="contentArea">Loading...</div>
 </div>
 
 <div class="modal" id="confirmModal">
   <div class="modal-content">
-    <h3>Confirm Delete</h3>
-    <p>Are you sure you want to delete this user?</p>
+    <p id="modalText"></p>
     <button onclick="confirmDelete()">Yes</button>
     <button onclick="closeModal()">Cancel</button>
   </div>
@@ -203,7 +235,7 @@ th{ text-align:left; }
 <script>
 let usersData=[];
 let currentPage=1;
-let usersPerPage=5;
+let perPage=5;
 let deleteId=null;
 
 function toggleSidebar(){
@@ -216,118 +248,143 @@ function closeSidebar(){
 }
 function navigate(section){
   closeSidebar();
-  if(section==="users") loadUsers();
-}
-function logout(){
-  firebase.auth().signOut().then(()=>window.location.href="index.html");
+  showSection(section);
 }
 
-firebase.auth().onAuthStateChanged(async user=>{
-  if(!user) return window.location.href="login.html";
+firebase.auth().onAuthStateChanged(async(user)=>{
+  if(!user) return location.href="login.html";
   const doc=await db.collection("users").doc(user.uid).get();
-  if(doc.data()?.role!=="admin") return window.location.href="index.html";
-  loadUsers();
+  if(doc.data()?.role!=="admin") return location.href="index.html";
+  showSection("dashboard");
 });
 
+function logout(){
+  firebase.auth().signOut().then(()=>location.href="index.html");
+}
+
+function showSection(section){
+  if(section==="dashboard") loadDashboard();
+  if(section==="users") loadUsers();
+  if(section==="orders") loadOrders();
+  if(section==="settings") loadSettings();
+}
+
+async function loadDashboard(){
+  const orders=await db.collection("orders").get();
+  const users=await db.collection("users").get();
+  contentArea.innerHTML=`
+    <div class="card">
+      <div class="dashboard-grid">
+        <div class="stat">
+          <h3>📦 ${orders.size}</h3>
+          <p>Total Orders</p>
+        </div>
+        <div class="stat">
+          <h3>👥 ${users.size}</h3>
+          <p>Total Users</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 async function loadUsers(){
-  const snapshot=await db.collection("users").get();
-  usersData=[];
-  snapshot.forEach(doc=>{
-    usersData.push({id:doc.id,...doc.data()});
-  });
+  const snap=await db.collection("users").get();
+  usersData=snap.docs.map(d=>({id:d.id,...d.data()}));
   renderUsers();
 }
 
 function renderUsers(){
   const search=document.getElementById("searchInput")?.value?.toLowerCase()||"";
-  const roleFilter=document.getElementById("roleFilter")?.value||"all";
+  const roleFilter=document.getElementById("roleFilter")?.value||"";
 
-  let filtered=usersData.filter(u=>{
-    const matchSearch=u.name?.toLowerCase().includes(search)||u.phone?.includes(search);
-    const matchRole=roleFilter==="all"||u.role===roleFilter;
-    return matchSearch&&matchRole;
-  });
+  let filtered=usersData.filter(u=>
+    (u.name||"").toLowerCase().includes(search) &&
+    (roleFilter?u.role===roleFilter:true)
+  );
 
-  const start=(currentPage-1)*usersPerPage;
-  const paginated=filtered.slice(start,start+usersPerPage);
+  const start=(currentPage-1)*perPage;
+  const paginated=filtered.slice(start,start+perPage);
 
-  let tableRows="";
-  let mobileRows="";
-
+  let rows="";
   paginated.forEach(u=>{
-    tableRows+=`
+    rows+=`
       <tr>
         <td>${u.name||""}</td>
         <td>${u.phone||""}</td>
         <td>${u.role}</td>
         <td>
-          <button class="action-btn delete-btn" onclick="openModal('${u.id}')">Delete</button>
+          <button class="action-btn delete-btn"
+            onclick="openModal('${u.id}')">Delete</button>
         </td>
-      </tr>
-    `;
-    mobileRows+=`
-      <div class="mobile-card">
-        <p><strong>Name:</strong> ${u.name||""}</p>
-        <p><strong>Phone:</strong> ${u.phone||""}</p>
-        <p><strong>Role:</strong> ${u.role}</p>
-        <button class="action-btn delete-btn" onclick="openModal('${u.id}')">Delete</button>
-      </div>
-    `;
+      </tr>`;
   });
 
-  let totalPages=Math.ceil(filtered.length/usersPerPage);
-  let paginationBtns="";
-  for(let i=1;i<=totalPages;i++){
-    paginationBtns+=`<button onclick="changePage(${i})">${i}</button>`;
-  }
-
   contentArea.innerHTML=`
-    <h2>Users</h2>
+    <div class="card">
+      <div class="controls">
+        <input id="searchInput" placeholder="Search..." oninput="renderUsers()">
+        <select id="roleFilter" onchange="renderUsers()">
+          <option value="">All Roles</option>
+          <option value="customer">Customer</option>
+          <option value="delivery">Delivery</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
 
-    <div class="filter-row">
-      <input type="text" id="searchInput" placeholder="Search..." oninput="renderUsers()">
-      <select id="roleFilter" onchange="renderUsers()">
-        <option value="all">All Roles</option>
-        <option value="customer">Customer</option>
-        <option value="delivery">Delivery</option>
-        <option value="admin">Admin</option>
-      </select>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th><th>Phone</th><th>Role</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+
+      <div class="pagination">
+        <button onclick="prevPage()">Prev</button>
+        <button onclick="nextPage()">Next</button>
+      </div>
     </div>
-
-    <table>
-      <tr>
-        <th>Name</th>
-        <th>Phone</th>
-        <th>Role</th>
-        <th>Action</th>
-      </tr>
-      ${tableRows}
-    </table>
-
-    ${mobileRows}
-
-    <div class="pagination">${paginationBtns}</div>
   `;
 }
 
-function changePage(page){
-  currentPage=page;
-  renderUsers();
-}
+function nextPage(){ currentPage++; renderUsers(); }
+function prevPage(){ if(currentPage>1) currentPage--; renderUsers(); }
 
 function openModal(id){
   deleteId=id;
+  modalText.innerText="Are you sure you want to delete this user?";
   confirmModal.style.display="flex";
 }
 function closeModal(){
   confirmModal.style.display="none";
 }
 async function confirmDelete(){
-  if(deleteId){
-    await db.collection("users").doc(deleteId).delete();
-    closeModal();
-    loadUsers();
-  }
+  await db.collection("users").doc(deleteId).delete();
+  closeModal();
+  loadUsers();
+}
+
+async function loadOrders(){
+  const snap=await db.collection("orders").get();
+  contentArea.innerHTML=`<div class="card"><h3>Total Orders: ${snap.size}</h3></div>`;
+}
+
+async function loadSettings(){
+  const doc=await db.collection("settings").doc("global").get();
+  const price=doc.data()?.price||75;
+  contentArea.innerHTML=`
+    <div class="card">
+      <h3>Update Price</h3>
+      <input id="priceInput" type="number" value="${price}">
+      <button onclick="savePrice()">Save</button>
+    </div>`;
+}
+async function savePrice(){
+  const price=Number(priceInput.value);
+  await db.collection("settings").doc("global").update({price});
+  alert("Updated");
 }
 </script>
 
