@@ -2,22 +2,157 @@
 <html>
 <head>
   <title>Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/style.css">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
+  <style>
+    .logo{
+      height:115px !important;
+    }
 
-  <!-- Load api FIRST -->
-  <script src="js/firebase.js"></script>
+    @media(max-width:768px){
+      .logo{
+        height:85px !important;
+      }
+    }
+
+    .login-card{
+      width:100%;
+      max-width:400px;
+      text-align:center;
+    }
+
+    .google-btn{
+      width:100%;
+      padding:14px;
+      border-radius:30px;
+      border:none;
+      background:white;
+      color:#0a5fd8;
+      font-weight:600;
+      font-size:16px;
+      cursor:pointer;
+      transition:.3s;
+    }
+
+    .google-btn:hover{
+      transform:scale(1.05);
+    }
+
+    /* MOBILE HEADER FIX */
+    @media(max-width:768px){
+
+      header{
+        flex-direction:column;
+        align-items:center;
+        text-align:center;
+        gap:15px;
+      }
+
+      nav{
+        flex-direction:column;
+        align-items:center;
+        width:100%;
+      }
+
+      nav button{
+        width:100%;
+        max-width:280px;
+      }
+    }
+
+    /* FOOTER MATCH */
+    .footer{
+      background:rgba(0,0,0,.55) !important;
+      padding:55px 20px 25px !important;
+    }
+
+    .footer-container{
+      display:flex !important;
+      justify-content:center !important;
+      gap:60px !important;
+      flex-wrap:wrap !important;
+      text-align:center !important;
+    }
+
+    .footer-container div{
+      min-width:220px !important;
+    }
+
+    @media(max-width:480px){
+      .footer-container{
+        flex-direction:column !important;
+        gap:30px !important;
+      }
+    }
+
+  </style>
 </head>
 
-<body class="center">
+<body>
 
-<h2>Login / Register</h2>
+<header>
+  <img src="assets/logo.png" class="logo" />
 
-<button onclick="startGoogleLogin()">Continue with Google</button>
+  <nav>
+    <button onclick="window.location.href='index.html'">Home</button>
+  </nav>
+</header>
+
+<main class="center">
+
+  <div class="card login-card">
+    <h2 style="margin-bottom:20px;">Login / Register</h2>
+
+    <button class="google-btn" onclick="startGoogleLogin()">
+      <i class="fab fa-google"></i> Continue with Google
+    </button>
+
+  </div>
+
+</main>
+
+<footer class="footer">
+<div class="footer-container">
+
+<div>
+<h3>Aquahills Beverages</h3>
+<p>Pure & Safe Drinking Water</p>
+
+<div class="social-icons">
+<i class="fab fa-facebook-f"></i>
+<i class="fab fa-instagram"></i>
+<i class="fab fa-youtube"></i>
+<i class="fab fa-linkedin-in"></i>
+</div>
+</div>
+
+<div>
+<h4>Contact</h4>
+<p><i class="fa-solid fa-phone"></i> +91 9876543210</p>
+<p><i class="fa-solid fa-envelope"></i> support@aquahills.com</p>
+</div>
+
+<div>
+<h4>Location</h4>
+<p><i class="fa-solid fa-location-dot"></i> Ghaziabad, Uttar Pradesh</p>
+</div>
+
+</div>
+
+<p class="footer-bottom">
+© 2026 Aquahills Beverages | ISI & BIS Certified | All Rights Reserved
+</p>
+</footer>
+
+<script src="js/firebase.js"></script>
 
 </body>
 </html>
