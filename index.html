@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Aquahills Beverages</title>
   <link rel="stylesheet" href="css/style.css">
+
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 </head>
@@ -11,13 +12,14 @@
 <body>
 
 <header class="header">
-  <div class="header-left">
+  <div>
     <img src="assets/logo.png" class="logo" />
   </div>
 
-  <nav class="nav">
+  <nav>
     <button id="adminBtn" onclick="goAdmin()" style="display:none">⚙️</button>
-    <button class="orders-btn" onclick="goOrders()">Orders</button>
+    <button onclick="goOrders()">Orders</button>
+    <button onclick="safeOrderNow()">Order</button>
     <button onclick="window.location.href='login.html'">Login</button>
   </nav>
 </header>
@@ -25,13 +27,14 @@
 <section class="hero">
   <div class="hero-overlay">
     <h1>Premium Drinking Water for Home & Business</h1>
-    <button onclick="safeOrderNow()" class="primary-btn">Order Now</button>
+    <button onclick="safeOrderNow()" class="primary-btn">
+      Order Now
+    </button>
   </div>
 </section>
 
 <section class="carousel-container">
   <div class="carousel">
-
     <div class="card">
       <h2>Advanced Purification</h2>
       <p>RO, UV and Ozonization process ensures complete safety and mineral balance.</p>
@@ -39,14 +42,13 @@
 
     <div class="card">
       <h2>Reliable Delivery</h2>
-      <p>Timely doorstep delivery for homes, offices and commercial establishments.</p>
+      <p>Timely doorstep delivery for homes and offices.</p>
     </div>
 
     <div class="card">
       <h2>Certified Quality</h2>
       <p>BIS compliant and quality tested before every dispatch.</p>
     </div>
-
   </div>
 </section>
 
@@ -66,7 +68,7 @@
       <p>Ghaziabad, Uttar Pradesh</p>
     </div>
   </div>
-  <p class="footer-bottom">© 2026 Aquahills Beverages. All Rights Reserved.</p>
+  <p class="footer-bottom">© 2026 Aquahills Beverages</p>
 </footer>
 
 <script src="js/firebase.js"></script>
