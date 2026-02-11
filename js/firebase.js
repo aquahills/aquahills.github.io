@@ -6,22 +6,31 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-
 const auth = firebase.auth();
 
 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
 function startGoogleLogin() {
   const provider = new firebase.auth.GoogleAuthProvider();
+
   auth.signInWithPopup(provider)
-    .then(result => {
+    .then(async result => {
+
+      const token = await result.user.getIdToken();
+
       localStorage.setItem("user", result.user.email);
       localStorage.setItem("name", result.user.displayName || "");
+
+      // AUTO SAVE USER TO SHEET
+      await api("saveUser", {
+        name: result.user.displayName || ""
+      });
+
       window.location.href = "index.html";
     })
-    .catch(error => {
-      console.error(error);
-      alert("Login failed. Please check authorized domains in Firebase.");
+    .catch(err => {
+      console.error(err);
+      alert("Login failed. Check Firebase authorized domains.");
     });
 }
 
