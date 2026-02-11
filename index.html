@@ -181,6 +181,27 @@ align-items:center;
     padding:14px 35px !important;
   }
 }
+/* ===== MOBILE HOME ABOVE LOGOUT ===== */
+@media(max-width:768px){
+
+nav{
+flex-direction:column !important;
+align-items:center !important;
+}
+
+#homeNavBtn{
+order:1;
+width:100%;
+max-width:280px;
+}
+
+#loginNavBtn{
+order:2;
+width:100%;
+max-width:280px;
+}
+
+}
 
 </style>
 </head>
@@ -309,6 +330,11 @@ mainActionBtn.textContent="Assigned Orders"
 mainActionBtn.onclick=()=>loadAssignedOrders(user.uid)
 ordersBtn.style.display="none"
 ordersBtn.onclick=()=>loadAssignedOrders(user.uid)
+document.getElementById("loginNavBtn").insertAdjacentHTML(
+"beforebegin",
+`<button id="homeNavBtn" onclick="location.href='index.html'">Home</button>`
+)
+
 }
 else{
 mainActionBtn.textContent="Order Now"
@@ -417,12 +443,6 @@ position:relative;
 text-align:center;
 ">
 
-<!-- HOME BUTTON -->
-<div style="position:absolute;top:25px;right:30px;">
-<button class="primary-btn" onclick="window.location.href='index.html'">
-Home
-</button>
-</div>
 
 <h2 style="margin-bottom:25px;">Active Orders</h2>
 
