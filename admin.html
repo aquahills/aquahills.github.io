@@ -248,6 +248,7 @@ margin-top:20px
 <div class="sidebar" id="sidebar">
 <button onclick="navigate('dashboard')">Dashboard</button>
 <button onclick="navigate('ordersSummary')">Orders</button>
+<button onclick="navigate('assignOrders')">Assign Orders</button>
 <button onclick="navigate('users')">Users</button>
 <button onclick="navigate('settings')">Pricing</button>
 <button onclick="logout()">Logout</button>
@@ -293,8 +294,65 @@ if(s==="users")loadUsers()
 if(s==="activeOrders")loadActiveOrders()
 if(s==="ordersSummary")loadOrdersSummary()
 if(s==="settings")loadSettings()
+if(s==="assignOrders")loadAssignOrders()
 }
 
+async function loadAssignOrders(){
+
+const ordersSnap=await db.collection("orders")
+.where("status","==","Pending")
+.get()
+
+const deliverySnap=await db.collection("users")
+.where("role","==","delivery")
+.get()
+
+let rows=""
+
+for(const doc of ordersSnap.docs){
+
+const o=doc.data()
+if(o.assignedTo) continue
+
+rows+=`
+<tr>
+<td>${doc.id}</td>
+<td>${o.bottles}</td>
+<td>₹${o.total}</td>
+<td>
+<select id="agent_${doc.id}">
+${deliverySnap.docs.map(u=>`<option value="${u.id}">${u.data().name||u.data().email}</option>`).join("")}
+</select>
+</td>
+<td>
+<button class="theme-btn success-btn" onclick="assignOrder('${doc.id}')">
+Assign
+</button>
+</td>
+</tr>`
+}
+
+contentArea.innerHTML=`
+<div class="admin-card">
+<h2>Assign Pending Orders</h2>
+<table>
+<tr>
+<th>Order ID</th>
+<th>Bottles</th>
+<th>Total</th>
+<th>Delivery Agent</th>
+<th>Action</th>
+</tr>
+${rows||"<tr><td colspan='5'>No Unassigned Orders</td></tr>"}
+</table>
+</div>`
+}
+
+async function assignOrder(orderId){
+const agent=document.getElementById("agent_"+orderId).value
+await db.collection("orders").doc(orderId).update({assignedTo:agent})
+loadAssignOrders()
+}
 /* DASHBOARD */
 async function loadDashboard(){
 const orders=await db.collection("orders").get()
