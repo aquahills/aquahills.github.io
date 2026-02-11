@@ -8,197 +8,145 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-  <style>
-    body { margin:0; overflow-x:hidden; }
+<style>
+body { margin:0; overflow-x:hidden; }
 
-    .topbar{
-      height:65px;
-      display:flex;
-      align-items:center;
-      padding:0 20px;
-      background:rgba(0,0,0,0.25);
-      backdrop-filter:blur(10px);
-    }
+.topbar{
+  height:70px;
+  display:flex;
+  align-items:center;
+  padding:0 25px;
+  background:rgba(0,0,0,0.3);
+}
 
-    .menu-btn{ font-size:24px; cursor:pointer; margin-right:15px; }
+.menu-btn{ font-size:26px; cursor:pointer; margin-right:15px; }
 
-    .sidebar{
-      position:fixed;
-      left:-260px;
-      top:0;
-      width:240px;
-      height:100%;
-      background:linear-gradient(180deg,#062c5c,#0a5fd8);
-      padding:25px 20px;
-      transition:.3s;
-      z-index:1001;
-    }
+.sidebar{
+  position:fixed;
+  left:-260px;
+  top:0;
+  width:250px;
+  height:100%;
+  background:linear-gradient(180deg,#062c5c,#0a5fd8);
+  padding:30px 20px;
+  transition:.3s;
+  z-index:1001;
+}
 
-    .sidebar.active{ left:0; }
+.sidebar.active{ left:0; }
 
-    .sidebar button{
-      width:100%;
-      padding:12px;
-      margin-bottom:12px;
-      border-radius:25px;
-      border:1px solid rgba(255,255,255,.3);
-      background:transparent;
-      color:white;
-      font-weight:600;
-      cursor:pointer;
-    }
+.sidebar button{
+  width:100%;
+  padding:12px;
+  margin-bottom:15px;
+  border-radius:25px;
+  border:1px solid rgba(255,255,255,.3);
+  background:transparent;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
 
-    .sidebar button:hover{ background:white; color:#0a5fd8; }
+.sidebar button:hover{ background:white; color:#0a5fd8; }
 
-    .overlay{
-      position:fixed;
-      width:100%;
-      height:100%;
-      background:rgba(0,0,0,.4);
-      display:none;
-      z-index:1000;
-    }
+.overlay{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,.4);
+  display:none;
+  z-index:1000;
+}
 
-    .overlay.active{ display:block; }
+.overlay.active{ display:block; }
 
-    .content{
-      padding:20px;
-      min-height:calc(100vh - 65px);
-      display:flex;
-      justify-content:center;
-    }
+.content{
+  display:flex;
+  justify-content:center;
+  padding:40px 20px;
+}
 
-    .wrapper{
-      width:100%;
-      max-width:1200px;
-    }
+.wrapper{
+  width:100%;
+  max-width:1100px;
+}
 
-    .card{
-      background:rgba(255,255,255,.15);
-      backdrop-filter:blur(15px);
-      padding:25px;
-      border-radius:18px;
-      box-shadow:0 8px 30px rgba(0,0,0,.3);
-      margin-bottom:25px;
-    }
+.admin-card{
+  background:rgba(255,255,255,.15);
+  backdrop-filter:blur(15px);
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.3);
+}
 
-    .dashboard-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-      gap:20px;
-      text-align:center;
-    }
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:25px;
+}
 
-    .stat{
-      padding:25px;
-      border-radius:15px;
-      background:rgba(255,255,255,.2);
-    }
+.stat{
+  background:rgba(255,255,255,.2);
+  padding:35px;
+  border-radius:18px;
+  text-align:center;
+  cursor:pointer;
+  transition:.3s;
+}
 
-    .stat h3{ margin:0; font-size:28px; }
+.stat:hover{ transform:translateY(-5px); }
 
-    .controls{
-      display:flex;
-      flex-wrap:wrap;
-      gap:15px;
-      margin-bottom:20px;
-    }
+.stat h2{ margin:0; font-size:34px; }
 
-    input,select{
-      padding:8px;
-      border-radius:8px;
-      border:none;
-    }
+.controls{
+  display:flex;
+  gap:15px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+}
 
-    table{
-      width:100%;
-      border-collapse:collapse;
-    }
+input,select{
+  padding:8px 10px;
+  border-radius:10px;
+  border:none;
+}
 
-    th,td{
-      padding:12px;
-      border-bottom:1px solid rgba(255,255,255,.2);
-      text-align:left;
-    }
+table{
+  width:100%;
+  border-collapse:collapse;
+}
 
-    .action-btn{
-      padding:6px 12px;
-      border-radius:15px;
-      border:none;
-      cursor:pointer;
-      font-weight:600;
-    }
+th,td{
+  padding:12px;
+  border-bottom:1px solid rgba(255,255,255,.2);
+}
 
-    .edit-btn{ background:white; color:#0a5fd8; }
-    .delete-btn{ background:#ff4d4d; color:white; }
+.action-btn{
+  padding:6px 12px;
+  border-radius:15px;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+}
 
-    .pagination{
-      display:flex;
-      justify-content:center;
-      gap:10px;
-      margin-top:20px;
-    }
+.edit-btn{ background:white; color:#0a5fd8; }
+.delete-btn{ background:#ff4d4d; color:white; }
+.success-btn{ background:#00b4ff; color:white; }
 
-    .pagination button{
-      padding:6px 12px;
-      border:none;
-      border-radius:8px;
-      cursor:pointer;
-    }
+.primary-theme-btn{
+  padding:10px 25px;
+  border-radius:25px;
+  border:none;
+  background:white;
+  color:#0a5fd8;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-    .modal{
-      position:fixed;
-      top:0;
-      left:0;
-      width:100%;
-      height:100%;
-      background:rgba(0,0,0,.6);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      z-index:2000;
-    }
-
-    .modal-content{
-      background:white;
-      color:black;
-      padding:25px;
-      border-radius:12px;
-      text-align:center;
-      width:90%;
-      max-width:350px;
-    }
-
-    @media(max-width:768px){
-
-      .content{ padding:15px; }
-
-      table thead{ display:none; }
-
-      table,tbody,tr,td{
-        display:block;
-        width:100%;
-      }
-
-      tr{
-        margin-bottom:15px;
-        background:rgba(255,255,255,.15);
-        padding:10px;
-        border-radius:12px;
-      }
-
-      td{
-        border:none;
-        padding:6px 0;
-      }
-
-      td::before{
-        font-weight:bold;
-        display:block;
-      }
-
-    }
-  </style>
+@media(max-width:768px){
+  .content{ padding:20px 15px; }
+}
+</style>
 </head>
 
 <body>
@@ -210,7 +158,7 @@
 
 <div class="sidebar" id="sidebar">
   <button onclick="navigate('dashboard')">Dashboard</button>
-  <button onclick="navigate('orders')">Orders</button>
+  <button onclick="navigate('ordersSummary')">Orders</button>
   <button onclick="navigate('users')">Users</button>
   <button onclick="navigate('settings')">Settings</button>
   <button onclick="logout()">Logout</button>
@@ -219,25 +167,12 @@
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <div class="content">
-  <div class="wrapper" id="contentArea">Loading...</div>
-</div>
-
-<div class="modal" id="confirmModal">
-  <div class="modal-content">
-    <p id="modalText"></p>
-    <button onclick="confirmDelete()">Yes</button>
-    <button onclick="closeModal()">Cancel</button>
-  </div>
+  <div class="wrapper" id="contentArea"></div>
 </div>
 
 <script src="js/firebase.js"></script>
 
 <script>
-let usersData=[];
-let currentPage=1;
-let perPage=5;
-let deleteId=null;
-
 function toggleSidebar(){
   sidebar.classList.toggle("active");
   overlay.classList.toggle("active");
@@ -265,122 +200,214 @@ function logout(){
 function showSection(section){
   if(section==="dashboard") loadDashboard();
   if(section==="users") loadUsers();
-  if(section==="orders") loadOrders();
   if(section==="settings") loadSettings();
+  if(section==="ordersSummary") loadOrdersSummary();
+  if(section==="activeOrders") loadActiveOrders();
 }
 
+/* DASHBOARD */
 async function loadDashboard(){
   const orders=await db.collection("orders").get();
   const users=await db.collection("users").get();
+  const active=orders.docs.filter(d=>d.data().status!=="Delivered");
+
   contentArea.innerHTML=`
-    <div class="card">
+    <div class="admin-card">
       <div class="dashboard-grid">
-        <div class="stat">
-          <h3>📦 ${orders.size}</h3>
-          <p>Total Orders</p>
+        <div class="stat" onclick="navigate('users')">
+          <h2>👥 ${users.size}</h2>
+          <p>All Users</p>
         </div>
-        <div class="stat">
-          <h3>👥 ${users.size}</h3>
-          <p>Total Users</p>
+        <div class="stat" onclick="navigate('activeOrders')">
+          <h2>📦 ${active.length}</h2>
+          <p>Active Orders</p>
         </div>
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
-async function loadUsers(){
-  const snap=await db.collection("users").get();
-  usersData=snap.docs.map(d=>({id:d.id,...d.data()}));
-  renderUsers();
-}
-
-function renderUsers(){
-  const search=document.getElementById("searchInput")?.value?.toLowerCase()||"";
-  const roleFilter=document.getElementById("roleFilter")?.value||"";
-
-  let filtered=usersData.filter(u=>
-    (u.name||"").toLowerCase().includes(search) &&
-    (roleFilter?u.role===roleFilter:true)
-  );
-
-  const start=(currentPage-1)*perPage;
-  const paginated=filtered.slice(start,start+perPage);
+/* ACTIVE ORDERS */
+async function loadActiveOrders(){
+  const snap=await db.collection("orders")
+    .where("status","!=","Delivered").get();
 
   let rows="";
-  paginated.forEach(u=>{
+  for(const doc of snap.docs){
+    const o=doc.data();
+    const userDoc=await db.collection("users").doc(o.customerId).get();
+    const u=userDoc.data()||{};
+    rows+=`
+      <tr>
+        <td>${u.name||""}</td>
+        <td>${u.phone||""}</td>
+        <td>${o.bottles}</td>
+        <td>₹${o.total}</td>
+        <td>
+          <button class="success-btn"
+            onclick="markDelivered('${doc.id}')">Mark Delivered</button>
+        </td>
+      </tr>`;
+  }
+
+  contentArea.innerHTML=`
+    <div class="admin-card">
+      <h2>Active Orders</h2>
+      <table>
+        <tr>
+          <th>Name</th><th>Phone</th>
+          <th>Bottles</th><th>Total</th><th>Action</th>
+        </tr>
+        ${rows}
+      </table>
+    </div>`;
+}
+
+async function markDelivered(id){
+  await db.collection("orders").doc(id).update({status:"Delivered"});
+  loadActiveOrders();
+}
+
+/* USERS */
+async function loadUsers(){
+  const snap=await db.collection("users").get();
+  let rows="";
+  snap.forEach(doc=>{
+    const u=doc.data();
     rows+=`
       <tr>
         <td>${u.name||""}</td>
         <td>${u.phone||""}</td>
         <td>${u.role}</td>
         <td>
-          <button class="action-btn delete-btn"
-            onclick="openModal('${u.id}')">Delete</button>
+          <button class="edit-btn"
+            onclick="editUser('${doc.id}')">Edit</button>
+          <button class="delete-btn"
+            onclick="deleteUser('${doc.id}')">Delete</button>
         </td>
       </tr>`;
   });
 
   contentArea.innerHTML=`
-    <div class="card">
-      <div class="controls">
-        <input id="searchInput" placeholder="Search..." oninput="renderUsers()">
-        <select id="roleFilter" onchange="renderUsers()">
-          <option value="">All Roles</option>
-          <option value="customer">Customer</option>
-          <option value="delivery">Delivery</option>
-          <option value="admin">Admin</option>
-        </select>
-      </div>
-
+    <div class="admin-card">
+      <h2>All Users</h2>
       <table>
-        <thead>
-          <tr>
-            <th>Name</th><th>Phone</th><th>Role</th><th>Action</th>
-          </tr>
-        </thead>
-        <tbody>${rows}</tbody>
+        <tr>
+          <th>Name</th><th>Phone</th>
+          <th>Role</th><th>Action</th>
+        </tr>
+        ${rows}
       </table>
-
-      <div class="pagination">
-        <button onclick="prevPage()">Prev</button>
-        <button onclick="nextPage()">Next</button>
-      </div>
-    </div>
-  `;
+    </div>`;
 }
 
-function nextPage(){ currentPage++; renderUsers(); }
-function prevPage(){ if(currentPage>1) currentPage--; renderUsers(); }
-
-function openModal(id){
-  deleteId=id;
-  modalText.innerText="Are you sure you want to delete this user?";
-  confirmModal.style.display="flex";
-}
-function closeModal(){
-  confirmModal.style.display="none";
-}
-async function confirmDelete(){
-  await db.collection("users").doc(deleteId).delete();
-  closeModal();
+function editUser(id){
+  const newRole=prompt("Enter role (admin/customer/delivery)");
+  if(!newRole) return;
+  db.collection("users").doc(id).update({role:newRole});
   loadUsers();
 }
 
-async function loadOrders(){
-  const snap=await db.collection("orders").get();
-  contentArea.innerHTML=`<div class="card"><h3>Total Orders: ${snap.size}</h3></div>`;
+function deleteUser(id){
+  if(confirm("Delete this user?")){
+    db.collection("users").doc(id).delete();
+    loadUsers();
+  }
 }
 
+/* ORDERS SUMMARY */
+async function loadOrdersSummary(){
+  const orders=await db.collection("orders").get();
+  const users=await db.collection("users").get();
+
+  const map={};
+  orders.forEach(o=>{
+    const d=o.data();
+    if(!map[d.customerId]) map[d.customerId]=[];
+    map[d.customerId].push(d);
+  });
+
+  let rows="";
+  users.forEach(u=>{
+    const id=u.id;
+    const data=u.data();
+    const userOrders=map[id]||[];
+    if(userOrders.length===0) return;
+    const last=userOrders.sort((a,b)=>b.createdAt?.seconds-a.createdAt?.seconds)[0];
+
+    rows+=`
+      <tr>
+        <td>${data.name||""}</td>
+        <td>${userOrders.length}</td>
+        <td>${last?.createdAt?.toDate().toLocaleDateString()||""}</td>
+        <td>
+          <button class="primary-theme-btn"
+            onclick="showUserOrders('${id}')">
+            Show All Orders
+          </button>
+        </td>
+      </tr>`;
+  });
+
+  contentArea.innerHTML=`
+    <div class="admin-card">
+      <h2>Orders Summary</h2>
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Orders Placed</th>
+          <th>Last Order</th>
+          <th>Action</th>
+        </tr>
+        ${rows}
+      </table>
+    </div>`;
+}
+
+async function showUserOrders(userId){
+  const snap=await db.collection("orders")
+    .where("customerId","==",userId)
+    .get();
+
+  let rows="";
+  snap.forEach(doc=>{
+    const o=doc.data();
+    rows+=`
+      <tr>
+        <td>${o.bottles}</td>
+        <td>₹${o.total}</td>
+        <td>${o.status}</td>
+      </tr>`;
+  });
+
+  contentArea.innerHTML=`
+    <div class="admin-card">
+      <h2>User Orders</h2>
+      <table>
+        <tr><th>Bottles</th><th>Total</th><th>Status</th></tr>
+        ${rows}
+      </table>
+      <br>
+      <button class="primary-theme-btn"
+        onclick="navigate('ordersSummary')">Back</button>
+    </div>`;
+}
+
+/* SETTINGS */
 async function loadSettings(){
   const doc=await db.collection("settings").doc("global").get();
   const price=doc.data()?.price||75;
+
   contentArea.innerHTML=`
-    <div class="card">
-      <h3>Update Price</h3>
-      <input id="priceInput" type="number" value="${price}">
-      <button onclick="savePrice()">Save</button>
+    <div class="admin-card">
+      <h2>Settings</h2>
+      <p>Bottle Price</p>
+      <input type="number" id="priceInput" value="${price}">
+      <br><br>
+      <button class="primary-theme-btn"
+        onclick="savePrice()">Save</button>
     </div>`;
 }
+
 async function savePrice(){
   const price=Number(priceInput.value);
   await db.collection("settings").doc("global").update({price});
