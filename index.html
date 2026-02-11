@@ -1,102 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Aquahills Beverages</title>
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<title>Aquahills Beverages</title>
+<link rel="stylesheet" href="css/style.css">
 
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
+<style>
+.dashboard-card{
+background:rgba(255,255,255,.15);
+backdrop-filter:blur(15px);
+padding:30px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,.3);
+width:100%;
+max-width:1000px;
+margin:auto
+}
+table{
+width:100%;
+border-collapse:collapse;
+color:white
+}
+th,td{
+padding:12px;
+border-bottom:1px solid rgba(255,255,255,.2);
+text-align:left
+}
+.success-btn{
+background:#00b4ff;
+color:white;
+padding:8px 18px;
+border:none;
+border-radius:25px;
+cursor:pointer
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <img src="assets/logo.png" class="logo" />
+<img src="assets/logo.png" class="logo"/>
 
-  <nav>
-  <button onclick="window.location.href='orders.html'">Orders</button>
-  <button id="loginNavBtn">Login</button>
-
+<nav>
+<button id="ordersBtn">Orders</button>
+<button id="loginNavBtn">Login</button>
 </nav>
-
 </header>
 
-<section class="hero">
-  <h1>Premium Drinking Water for Home & Business</h1>
-  <button onclick="window.location.href='order.html'" class="primary-btn">
-    Order Now
-  </button>
-</section>
+<main id="mainContent">
 
+<section class="hero" id="heroSection">
+<h1>Premium Drinking Water for Home & Business</h1>
+<button id="mainActionBtn" class="primary-btn">
+Order Now
+</button>
+</section>
 
 <section class="carousel-container">
-  <div class="carousel">
-    <div class="card">
-      <h2>Advanced RO + UV</h2>
-      <p>Multi stage purification ensures maximum safety and mineral balance.</p>
-    </div>
+<div class="carousel">
+<div class="card">
+<h2>Advanced RO + UV</h2>
+<p>Multi stage purification ensures maximum safety and mineral balance.</p>
+</div>
 
-    <div class="card">
-      <h2>Doorstep Delivery</h2>
-      <p>Reliable delivery service for homes, offices and businesses.</p>
-    </div>
+<div class="card">
+<h2>Doorstep Delivery</h2>
+<p>Reliable delivery service for homes, offices and businesses.</p>
+</div>
 
-    <div class="card">
-      <h2>BIS Certified</h2>
-      <p>Quality tested before every dispatch to maintain standards.</p>
-    </div>
-  </div>
+<div class="card">
+<h2>BIS Certified</h2>
+<p>Quality tested before every dispatch to maintain standards.</p>
+</div>
+</div>
 </section>
 
+</main>
+
 <footer class="footer">
-  <div class="footer-container">
-    <div>
-      <h3>Aquahills Beverages</h3>
-      <p>Pure & Safe Drinking Water</p>
-    </div>
-    <div>
-      <h4>Contact</h4>
-      <p>Phone: +91 9876543210</p>
-      <p>Email: support@aquahills.com</p>
-    </div>
-    <div>
-      <h4>Location</h4>
-      <p>Ghaziabad, Uttar Pradesh</p>
-    </div>
-  </div>
-  <p class="footer-bottom">© 2026 Aquahills Beverages</p>
+<div class="footer-container">
+<div>
+<h3>Aquahills Beverages</h3>
+<p>Pure & Safe Drinking Water</p>
+</div>
+<div>
+<h4>Contact</h4>
+<p>Phone: +91 9876543210</p>
+<p>Email: support@aquahills.com</p>
+</div>
+<div>
+<h4>Location</h4>
+<p>Ghaziabad, Uttar Pradesh</p>
+</div>
+</div>
+<p class="footer-bottom">© 2026 Aquahills Beverages</p>
 </footer>
 
 <script src="js/firebase.js"></script>
-  <script>
-document.addEventListener("DOMContentLoaded", () => {
 
-  const loginBtn = document.getElementById("loginNavBtn");
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
 
-  firebase.auth().onAuthStateChanged((user) => {
+const loginBtn=document.getElementById("loginNavBtn")
+const mainActionBtn=document.getElementById("mainActionBtn")
+const ordersBtn=document.getElementById("ordersBtn")
+const mainContent=document.getElementById("mainContent")
 
-    if (user) {
-      loginBtn.textContent = "Logout";
-      loginBtn.onclick = () => {
-        firebase.auth().signOut().then(() => {
-          window.location.reload();
-        });
-      };
-    } else {
-      loginBtn.textContent = "Login";
-      loginBtn.onclick = () => {
-        window.location.href = "login.html";
-      };
-    }
+firebase.auth().onAuthStateChanged(async user=>{
 
-  });
+if(user){
+loginBtn.textContent="Logout"
+loginBtn.onclick=()=>firebase.auth().signOut().then(()=>location.reload())
 
-});
+const userDoc=await db.collection("users").doc(user.uid).get()
+const role=userDoc.data()?.role||"customer"
+
+if(role==="admin"){
+mainActionBtn.textContent="Admin Controls"
+mainActionBtn.onclick=()=>location.href="admin.html"
+ordersBtn.onclick=()=>loadActiveOrders()
+}
+
+else if(role==="delivery"){
+mainActionBtn.textContent="Assigned Orders"
+mainActionBtn.onclick=()=>loadAssignedOrders(user.uid)
+ordersBtn.onclick=()=>loadAssignedOrders(user.uid)
+}
+
+else{
+mainActionBtn.textContent="Order Now"
+mainActionBtn.onclick=()=>location.href="order.html"
+ordersBtn.onclick=()=>location.href="orders.html"
+}
+
+}
+else{
+loginBtn.textContent="Login"
+loginBtn.onclick=()=>location.href="login.html"
+mainActionBtn.onclick=()=>location.href="order.html"
+ordersBtn.onclick=()=>location.href="orders.html"
+}
+
+})
+
+})
+
+/* ADMIN ACTIVE ORDERS */
+async function loadActiveOrders(){
+
+const snap=await db.collection("orders")
+.where("status","!=","Delivered")
+.get()
+
+let rows=""
+for(const doc of snap.docs){
+const o=doc.data()
+const uDoc=await db.collection("users").doc(o.customerId).get()
+const u=uDoc.data()||{}
+
+rows+=`
+<tr>
+<td>${u.name||""}</td>
+<td>${u.phone||""}</td>
+<td>${o.bottles}</td>
+<td>₹${o.total}</td>
+<td>
+<button class="success-btn" onclick="markDelivered('${doc.id}')">
+Mark Delivered
+</button>
+</td>
+</tr>`
+}
+
+renderTable("Active Orders",rows)
+}
+
+/* DELIVERY ASSIGNED ORDERS */
+async function loadAssignedOrders(uid){
+
+const snap=await db.collection("orders")
+.where("assignedTo","==",uid)
+.where("status","!=","Delivered")
+.get()
+
+let rows=""
+for(const doc of snap.docs){
+const o=doc.data()
+const uDoc=await db.collection("users").doc(o.customerId).get()
+const u=uDoc.data()||{}
+
+rows+=`
+<tr>
+<td>${u.name||""}</td>
+<td>${u.phone||""}</td>
+<td>${o.bottles}</td>
+<td>₹${o.total}</td>
+<td>
+<button class="success-btn" onclick="markDelivered('${doc.id}')">
+Mark Delivered
+</button>
+</td>
+</tr>`
+}
+
+renderTable("Assigned Orders",rows)
+}
+
+/* COMMON TABLE RENDER */
+function renderTable(title,rows){
+
+document.getElementById("heroSection").style.display="none"
+
+document.querySelector(".carousel-container").style.display="none"
+
+document.getElementById("mainContent").innerHTML=`
+<div class="dashboard-card">
+<h2 style="margin-bottom:20px;">${title}</h2>
+<table>
+<tr>
+<th>Name</th>
+<th>Phone</th>
+<th>Bottles</th>
+<th>Total</th>
+<th>Action</th>
+</tr>
+${rows||"<tr><td colspan='5'>No Orders</td></tr>"}
+</table>
+</div>`
+}
+
+async function markDelivered(id){
+await db.collection("orders").doc(id).update({status:"Delivered"})
+location.reload()
+}
 </script>
-
 
 </body>
 </html>
