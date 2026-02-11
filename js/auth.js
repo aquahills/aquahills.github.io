@@ -6,16 +6,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     const user = await api("getUser", { email });
 
-    if (user.role === "admin") {
-      document.getElementById("adminBtn").style.display = "inline-block";
+    // Show admin button if admin
+    if (user && user.role === "admin") {
+      const adminBtn = document.getElementById("adminBtn");
+      if (adminBtn) {
+        adminBtn.style.display = "inline-block";
+      }
     }
 
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error("Auth init error:", error);
   }
 });
 
-/* Order button fix */
+/* =========================
+   Navigation Functions
+   ========================= */
+
 function safeOrderNow() {
   const email = localStorage.getItem("user");
 
@@ -39,5 +46,12 @@ function goOrders() {
 }
 
 function goAdmin() {
+  const email = localStorage.getItem("user");
+
+  if (!email) {
+    window.location.href = "login.html";
+    return;
+  }
+
   window.location.href = "admin.html";
 }
