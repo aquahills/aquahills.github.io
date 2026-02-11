@@ -12,12 +12,53 @@
 body{margin:0;overflow-x:hidden}
 
 .topbar{
-height:70px;
 display:flex;
+flex-direction:column;
 align-items:center;
-padding:0 25px;
-background:rgba(0,0,0,.3)
+padding:20px 20px 10px 20px;
+background:transparent;
 }
+
+.topbar-row{
+width:100%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.logo{
+height:110px;
+margin:10px 0;
+}
+
+.admin-title{
+font-size:30px;
+font-weight:500;
+opacity:0.85;
+letter-spacing:1px;
+}
+
+.nav-buttons{
+display:flex;
+gap:10px;
+}
+
+.nav-buttons button{
+padding:8px 18px;
+border-radius:25px;
+border:1px solid white;
+background:transparent;
+color:white;
+cursor:pointer;
+font-weight:600;
+transition:.3s;
+}
+
+.nav-buttons button:hover{
+background:white;
+color:#0a5fd8;
+}
+
 
 .menu-btn{font-size:26px;cursor:pointer;margin-right:15px}
 
@@ -186,9 +227,22 @@ margin-top:20px
 <body>
 
 <div class="topbar">
+
+<div class="topbar-row">
 <div class="menu-btn" onclick="toggleSidebar()">☰</div>
-<h3>Admin Panel</h3>
+
+<div class="nav-buttons">
+<button onclick="window.location.href='index.html'">Home</button>
+<button onclick="logout()">Logout</button>
 </div>
+</div>
+
+<img src="assets/logo.png" class="logo">
+
+<div class="admin-title">Admin Panel</div>
+
+</div>
+
 
 <div class="sidebar" id="sidebar">
 <button onclick="navigate('dashboard')">Dashboard</button>
@@ -509,13 +563,12 @@ const price=doc.data()?.price||75
 contentArea.innerHTML=`
 <div class="admin-card">
 <h2>Settings</h2>
-<div style="display:flex;gap:15px;margin-top:20px;justify-content:flex-start;align-items:center;">
+<div style="display:flex;gap:15px;margin-top:20px;justify-content:center;align-items:center;">
 <input type="number" id="priceInput" value="${price}" style="width:200px;">
 <button class="theme-btn" onclick="savePrice()">Save</button>
 </div>
 </div>`
 }
-
 
 async function savePrice(){
 await db.collection("settings").doc("global").update({price:Number(priceInput.value)})
