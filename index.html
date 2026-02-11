@@ -361,7 +361,12 @@ renderTable("Active Orders",rows)
 }
 
 async function loadAssignedOrders(uid){
+
 if(!uid) return;
+
+document.getElementById("heroSection").style.display="none"
+document.querySelector(".carousel-container").style.display="none"
+
 const snap=await db.collection("orders")
 .where("assignedTo","==",uid)
 .where("status","!=","Delivered")
@@ -370,16 +375,25 @@ const snap=await db.collection("orders")
 let rows=""
 
 for(const doc of snap.docs){
+
 const o=doc.data()
-const uDoc=await db.collection("users").doc(o.customerId).get()
-const u=uDoc.data()||{}
+
+const userDoc=await db.collection("users").doc(o.customerId).get()
+const u=userDoc.data()||{}
+const addr=u.address||{}
+
+const fullAddress = `
+${addr.house||""},
+${addr.street||""},
+${addr.city||""} - ${addr.pincode||""}
+`
 
 rows+=`
 <tr>
 <td>${u.name||""}</td>
 <td>${u.phone||""}</td>
 <td>${o.bottles}</td>
-<td>₹${o.total}</td>
+<td>${fullAddress}</td>
 <td>
 <button class="success-btn" onclick="markDelivered('${doc.id}')">
 Mark Delivered
@@ -388,8 +402,51 @@ Mark Delivered
 </tr>`
 }
 
-renderTable("Assigned Orders",rows)
+document.getElementById("mainContent").innerHTML=`
+<div style="width:100%;display:flex;justify-content:center;padding:40px 20px;">
+
+<div style="
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(15px);
+padding:30px;
+border-radius:20px;
+width:100%;
+max-width:1100px;
+box-shadow:0 10px 35px rgba(0,0,0,0.3);
+position:relative;
+text-align:center;
+">
+
+<!-- HOME BUTTON -->
+<div style="position:absolute;top:25px;right:30px;">
+<button class="primary-btn" onclick="window.location.href='index.html'">
+Home
+</button>
+</div>
+
+<h2 style="margin-bottom:25px;">Active Orders</h2>
+
+<div style="width:100%;overflow-x:auto;">
+<table style="width:100%;border-collapse:collapse;text-align:center;min-width:800px;">
+
+<tr style="border-bottom:1px solid rgba(255,255,255,0.3);">
+<th style="padding:14px;">Name</th>
+<th style="padding:14px;">Phone</th>
+<th style="padding:14px;">Bottles</th>
+<th style="padding:14px;">Address</th>
+<th style="padding:14px;">Action</th>
+</tr>
+
+${rows||"<tr><td colspan='5' style='padding:20px;'>No Orders Assigned</td></tr>"}
+
+</table>
+</div>
+
+</div>
+</div>
+`
 }
+
 
 function renderTable(title,rows){
 document.getElementById("heroSection").style.display="none"
