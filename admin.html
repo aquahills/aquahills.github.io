@@ -14,7 +14,6 @@
       overflow-x: hidden;
     }
 
-    /* ===== TOP BAR ===== */
     .topbar {
       height: 70px;
       display: flex;
@@ -25,32 +24,26 @@
     }
 
     .menu-btn {
-      font-size: 28px;
+      font-size: 26px;
       cursor: pointer;
       margin-right: 20px;
     }
 
-    /* ===== SIDEBAR ===== */
     .sidebar {
       position: fixed;
-      left: -270px;
+      left: -260px;
       top: 0;
-      width: 260px;
+      width: 250px;
       height: 100%;
       background: linear-gradient(180deg, #062c5c 0%, #0a5fd8 100%);
       padding: 30px 20px;
       transition: 0.3s ease;
       z-index: 1001;
-      box-shadow: 5px 0 20px rgba(0,0,0,0.4);
+      box-shadow: 5px 0 25px rgba(0,0,0,0.4);
     }
 
     .sidebar.active {
       left: 0;
-    }
-
-    .sidebar h2 {
-      margin-bottom: 35px;
-      font-weight: 600;
     }
 
     .sidebar button {
@@ -71,11 +64,8 @@
       color: #0a5fd8;
     }
 
-    /* ===== OVERLAY ===== */
     .overlay {
       position: fixed;
-      top: 0;
-      left: 0;
       width: 100%;
       height: 100%;
       background: rgba(0,0,0,0.4);
@@ -87,23 +77,32 @@
       display: block;
     }
 
-    /* ===== CONTENT ===== */
     .content {
-      padding: 40px 20px;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
+      align-items: center;
+      padding: 40px 20px;
       min-height: calc(100vh - 70px);
     }
 
     .content-wrapper {
       width: 100%;
-      max-width: 1000px;
+      max-width: 1100px;
+    }
+
+    .admin-card {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(15px);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.3);
+      width: 100%;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
+      margin-top: 20px;
       color: white;
     }
 
@@ -113,12 +112,28 @@
       text-align: left;
     }
 
-    input {
-      padding: 8px;
+    .action-btn {
+      padding: 6px 12px;
+      border-radius: 15px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .edit-btn {
+      background: white;
+      color: #0a5fd8;
+    }
+
+    .save-btn {
+      background: #00b4ff;
+      color: white;
+    }
+
+    select, input {
+      padding: 6px;
       border-radius: 6px;
       border: none;
-      margin-top: 8px;
-      width: 200px;
     }
   </style>
 </head>
@@ -131,7 +146,6 @@
 </div>
 
 <div class="sidebar" id="sidebar">
-  <h2>Admin</h2>
   <button onclick="navigate('dashboard')">Dashboard</button>
   <button onclick="navigate('orders')">Orders</button>
   <button onclick="navigate('users')">Users</button>
@@ -151,13 +165,13 @@
 
 <script>
 function toggleSidebar() {
-  document.getElementById("sidebar").classList.toggle("active");
-  document.getElementById("overlay").classList.toggle("active");
+  sidebar.classList.toggle("active");
+  overlay.classList.toggle("active");
 }
 
 function closeSidebar() {
-  document.getElementById("sidebar").classList.remove("active");
-  document.getElementById("overlay").classList.remove("active");
+  sidebar.classList.remove("active");
+  overlay.classList.remove("active");
 }
 
 function navigate(section) {
@@ -166,19 +180,11 @@ function navigate(section) {
 }
 
 firebase.auth().onAuthStateChanged(async (user) => {
-
-  if (!user) {
-    window.location.href = "login.html";
-    return;
-  }
+  if (!user) return window.location.href = "login.html";
 
   const doc = await db.collection("users").doc(user.uid).get();
-  const role = doc.data()?.role;
-
-  if (role !== "admin") {
-    window.location.href = "index.html";
-    return;
-  }
+  if (doc.data()?.role !== "admin")
+    return window.location.href = "index.html";
 
   showSection("dashboard");
 });
@@ -191,17 +197,15 @@ function logout() {
 
 function showSection(section) {
   if (section === "dashboard") loadDashboard();
-  if (section === "orders") loadOrders();
   if (section === "users") loadUsers();
-  if (section === "settings") loadSettings();
 }
 
 async function loadDashboard() {
   const orders = await db.collection("orders").get();
   const users = await db.collection("users").get();
 
-  document.getElementById("contentArea").innerHTML = `
-    <div class="card">
+  contentArea.innerHTML = `
+    <div class="admin-card">
       <h2>Dashboard</h2>
       <p>Total Orders: ${orders.size}</p>
       <p>Total Users: ${users.size}</p>
@@ -209,65 +213,34 @@ async function loadDashboard() {
   `;
 }
 
-async function loadOrders() {
-  const snapshot = await db.collection("orders")
-    .orderBy("createdAt", "desc")
-    .get();
-
-  let rows = "";
-
-  snapshot.forEach(doc => {
-    const o = doc.data();
-    rows += `
-      <tr>
-        <td>${doc.id}</td>
-        <td>${o.customerEmail}</td>
-        <td>${o.bottles}</td>
-        <td>${o.status}</td>
-      </tr>
-    `;
-  });
-
-  document.getElementById("contentArea").innerHTML = `
-    <div class="card">
-      <h2>Orders</h2>
-      <table>
-        <tr>
-          <th>ID</th>
-          <th>Email</th>
-          <th>Bottles</th>
-          <th>Status</th>
-        </tr>
-        ${rows}
-      </table>
-    </div>
-  `;
-}
-
 async function loadUsers() {
   const snapshot = await db.collection("users").get();
-
   let rows = "";
 
   snapshot.forEach(doc => {
     const u = doc.data();
     rows += `
-      <tr>
-        <td>${u.name || "-"}</td>
-        <td>${u.phone || "-"}</td>
-        <td>${u.role}</td>
+      <tr id="row-${doc.id}">
+        <td><span class="name">${u.name || ""}</span></td>
+        <td><span class="phone">${u.phone || ""}</span></td>
+        <td><span class="role">${u.role}</span></td>
+        <td>
+          <button class="action-btn edit-btn"
+            onclick="editUser('${doc.id}')">Edit</button>
+        </td>
       </tr>
     `;
   });
 
-  document.getElementById("contentArea").innerHTML = `
-    <div class="card">
+  contentArea.innerHTML = `
+    <div class="admin-card">
       <h2>Users</h2>
       <table>
         <tr>
           <th>Name</th>
           <th>Phone</th>
           <th>Role</th>
+          <th>Action</th>
         </tr>
         ${rows}
       </table>
@@ -275,25 +248,42 @@ async function loadUsers() {
   `;
 }
 
-async function loadSettings() {
-  const doc = await db.collection("settings").doc("global").get();
-  const data = doc.data() || {};
+function editUser(id) {
+  const row = document.getElementById("row-" + id);
 
-  document.getElementById("contentArea").innerHTML = `
-    <div class="card">
-      <h2>Settings</h2>
-      <label>Bottle Price</label><br>
-      <input type="number" id="priceInput" value="${data.price || 75}">
-      <br><br>
-      <button class="primary-btn" onclick="savePrice()">Save</button>
-    </div>
+  const name = row.querySelector(".name").innerText;
+  const phone = row.querySelector(".phone").innerText;
+  const role = row.querySelector(".role").innerText;
+
+  row.innerHTML = `
+    <td><input id="name-${id}" value="${name}"></td>
+    <td><input id="phone-${id}" value="${phone}"></td>
+    <td>
+      <select id="role-${id}">
+        <option value="customer" ${role==="customer"?"selected":""}>Customer</option>
+        <option value="delivery" ${role==="delivery"?"selected":""}>Delivery</option>
+        <option value="admin" ${role==="admin"?"selected":""}>Admin</option>
+      </select>
+    </td>
+    <td>
+      <button class="action-btn save-btn"
+        onclick="saveUser('${id}')">Save</button>
+    </td>
   `;
 }
 
-async function savePrice() {
-  const price = Number(document.getElementById("priceInput").value);
-  await db.collection("settings").doc("global").update({ price });
-  alert("Price updated");
+async function saveUser(id) {
+  const name = document.getElementById("name-" + id).value;
+  const phone = document.getElementById("phone-" + id).value;
+  const role = document.getElementById("role-" + id).value;
+
+  await db.collection("users").doc(id).update({
+    name,
+    phone,
+    role
+  });
+
+  loadUsers();
 }
 </script>
 
