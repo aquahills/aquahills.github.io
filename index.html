@@ -109,29 +109,39 @@ document.addEventListener("DOMContentLoaded",()=>{
 const loginBtn=document.getElementById("loginNavBtn")
 const mainActionBtn=document.getElementById("mainActionBtn")
 const ordersBtn=document.getElementById("ordersBtn")
-const mainContent=document.getElementById("mainContent")
 
 firebase.auth().onAuthStateChanged(async user=>{
 
 if(user){
+
 loginBtn.textContent="Logout"
 loginBtn.onclick=()=>firebase.auth().signOut().then(()=>location.reload())
 
 const userDoc=await db.collection("users").doc(user.uid).get()
-const role=userDoc.data()?.role||"customer"
 
+if(!userDoc.exists){
+console.error("User document missing")
+return
+}
+
+const data=userDoc.data()
+const role=data.role ? data.role.trim().toLowerCase() : "customer"
+
+/* ADMIN */
 if(role==="admin"){
 mainActionBtn.textContent="Admin Controls"
 mainActionBtn.onclick=()=>location.href="admin.html"
 ordersBtn.onclick=()=>loadActiveOrders()
 }
 
+/* DELIVERY */
 else if(role==="delivery"){
 mainActionBtn.textContent="Assigned Orders"
 mainActionBtn.onclick=()=>loadAssignedOrders(user.uid)
 ordersBtn.onclick=()=>loadAssignedOrders(user.uid)
 }
 
+/* CUSTOMER */
 else{
 mainActionBtn.textContent="Order Now"
 mainActionBtn.onclick=()=>location.href="order.html"
@@ -142,7 +152,10 @@ ordersBtn.onclick=()=>location.href="orders.html"
 else{
 loginBtn.textContent="Login"
 loginBtn.onclick=()=>location.href="login.html"
+
+mainActionBtn.textContent="Order Now"
 mainActionBtn.onclick=()=>location.href="order.html"
+
 ordersBtn.onclick=()=>location.href="orders.html"
 }
 
@@ -158,6 +171,7 @@ const snap=await db.collection("orders")
 .get()
 
 let rows=""
+
 for(const doc of snap.docs){
 const o=doc.data()
 const uDoc=await db.collection("users").doc(o.customerId).get()
@@ -189,6 +203,7 @@ const snap=await db.collection("orders")
 .get()
 
 let rows=""
+
 for(const doc of snap.docs){
 const o=doc.data()
 const uDoc=await db.collection("users").doc(o.customerId).get()
@@ -215,7 +230,6 @@ renderTable("Assigned Orders",rows)
 function renderTable(title,rows){
 
 document.getElementById("heroSection").style.display="none"
-
 document.querySelector(".carousel-container").style.display="none"
 
 document.getElementById("mainContent").innerHTML=`
