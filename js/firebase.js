@@ -13,11 +13,25 @@ function startGoogleLogin() {
   auth.signInWithRedirect(provider);
 }
 
-auth.getRedirectResult().then(result => {
-  if (result.user) {
-    localStorage.setItem("user", result.user.email);
-    window.location.href = "index.html";
+/* Proper redirect handling */
+auth.getRedirectResult()
+  .then(result => {
+    if (result.user) {
+      localStorage.setItem("user", result.user.email);
+      localStorage.setItem("name", result.user.displayName || "");
+      window.location.replace("index.html");
+    }
+  })
+  .catch(error => {
+    console.error(error);
+    alert("Login failed. Please try again.");
+  });
+
+/* Keep user logged in */
+auth.onAuthStateChanged(user => {
+  if (user) {
+    localStorage.setItem("user", user.email);
+  } else {
+    localStorage.removeItem("user");
   }
-}).catch(error => {
-  alert("Login failed. Try again.");
 });
