@@ -1,80 +1,148 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Admin Panel</title>
+  <title>Admin Settings</title>
   <link rel="stylesheet" href="css/style.css">
+
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 </head>
-<body class="center">
 
-<h2>Admin Panel</h2>
+<body>
 
-<section>
-  <h3>Price Control</h3>
-  <input id="priceInput" type="number">
-  <button onclick="updatePrice()">Update Price</button>
-</section>
+<header>
+  <img src="assets/logo.png" class="logo" />
+  <nav>
+    <button onclick="window.location.href='orders.html'">Orders</button>
+    <button onclick="window.location.href='index.html'">Home</button>
+  </nav>
+</header>
 
-<section>
-  <h3>User Management</h3>
-  <div id="users"></div>
-</section>
+<main class="center">
 
+  <h2>Admin Settings</h2>
+
+  <section class="card">
+    <h3>Price Control</h3>
+    <input id="priceInput" type="number" placeholder="Enter price">
+    <button class="primary-btn" onclick="updatePrice()">Update Price</button>
+  </section>
+
+  <section class="card">
+    <h3>User Role Management</h3>
+    <div id="users"></div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-container">
+    <div>
+      <h3>Aquahills Beverages</h3>
+      <p>Pure & Safe Drinking Water</p>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <p>Phone: +91 9876543210</p>
+      <p>Email: support@aquahills.com</p>
+    </div>
+    <div>
+      <h4>Location</h4>
+      <p>Ghaziabad, Uttar Pradesh</p>
+    </div>
+  </div>
+  <p class="footer-bottom">© 2026 Aquahills Beverages</p>
+</footer>
+
+<script src="js/firebase.js"></script>
 <script src="js/api.js"></script>
+
 <script>
-  let deliveryUsers = [];
+document.addEventListener("DOMContentLoaded", () => {
 
-(async () => {
-  const email = localStorage.getItem("user");
-  const user = await api("getUser", { email });
+  firebase.auth().onAuthStateChanged(async (user) => {
 
-  if (user.role !== "admin") {
-    alert("Unauthorized");
-    window.location.href = "index.html";
-    return;
-  }
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
 
-  const settings = await api("getSettings");
-  document.getElementById("priceInput").value = settings.price;
+    const profile = await api("getUser");
 
-  const res = await api("getAllUsers", { email });
-  const users = res.users || [];
-  deliveryUsers = users.filter(u => u.role === "delivery");
-  const container = document.getElementById("users");
+    if (!profile || profile.role !== "admin") {
+      alert("Unauthorized access");
+      window.location.href = "index.html";
+      return;
+    }
 
-  users.forEach(u => {
-    const div = document.createElement("div");
-    div.className = "card";
+    // LOAD PRICE
+    const settings = await api("getSettings");
+    if (settings && settings.price) {
+      document.getElementById("priceInput").value = settings.price;
+    }
 
-    div.innerHTML = `
-      <p><strong>${u.name}</strong> (${u.email})</p>
-      <p>Role:
-        <select onchange="changeRole('${u.email}', this.value)">
-          <option ${u.role === "customer" ? "selected" : ""}>customer</option>
-          <option ${u.role === "delivery" ? "selected" : ""}>delivery</option>
-          <option ${u.role === "admin" ? "selected" : ""}>admin</option>
-        </select>
-      </p>
-    `;
-    container.appendChild(div);
+    // LOAD USERS
+    const res = await api("getAllUsers");
+    const users = res.users || [];
+
+    const container = document.getElementById("users");
+    container.innerHTML = "";
+
+    users.forEach(u => {
+      const div = document.createElement("div");
+      div.className = "card";
+
+      div.innerHTML = `
+        <p><strong>${u.name || "No Name"}</strong></p>
+        <p>${u.email}</p>
+        <p>
+          Role:
+          <select onchange="changeRole('${u.email}', this.value)">
+            <option value="customer" ${u.role === "customer" ? "selected" : ""}>customer</option>
+            <option value="delivery" ${u.role === "delivery" ? "selected" : ""}>delivery</option>
+            <option value="admin" ${u.role === "admin" ? "selected" : ""}>admin</option>
+          </select>
+        </p>
+      `;
+
+      container.appendChild(div);
+    });
+
   });
-})();
+
+});
 
 async function changeRole(userEmail, role) {
-  await api("updateUserRole", {
-    adminEmail: localStorage.getItem("user"),
+  const res = await api("updateUserRole", {
     userEmail,
     role
   });
-  alert("Role updated");
+
+  if (res.success) {
+    alert("Role updated successfully");
+  } else {
+    alert("Failed to update role");
+  }
 }
 
 async function updatePrice() {
   const price = document.getElementById("priceInput").value;
-  await api("saveSetting", { key: "price", value: price });
-  alert("Price updated");
+
+  if (!price || price <= 0) {
+    alert("Invalid price");
+    return;
+  }
+
+  const res = await api("saveSetting", {
+    key: "price",
+    value: price
+  });
+
+  if (res.success) {
+    alert("Price updated successfully");
+  } else {
+    alert("Failed to update price");
+  }
 }
 </script>
 
