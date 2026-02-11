@@ -2,11 +2,62 @@
 <html>
 <head>
   <title>Place Order</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/style.css">
 
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <style>
+    .order-card{
+      width:100%;
+      max-width:420px;
+      text-align:center;
+    }
+
+    .qty-controls{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:15px;
+      margin:20px 0;
+      flex-wrap:wrap;
+    }
+
+    .qty-controls button{
+      padding:10px 18px;
+      border-radius:25px;
+      border:none;
+      font-size:18px;
+      cursor:pointer;
+    }
+
+    .qty-controls input{
+      width:70px;
+      text-align:center;
+      padding:8px;
+      border-radius:10px;
+      border:none;
+    }
+
+    @media(max-width:480px){
+      header{
+        flex-direction:column;
+        gap:15px;
+      }
+
+      nav{
+        flex-direction:column;
+        width:100%;
+      }
+
+      nav button{
+        width:100%;
+        max-width:260px;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -21,18 +72,22 @@
 
 <main class="center">
 
-  <div class="card">
+  <div class="card order-card">
     <h2>Place Your Order</h2>
 
-    <div style="margin:20px 0;">
+    <div class="qty-controls">
       <button onclick="changeQty(-1)">-</button>
-      <input id="qty" type="number" value="1" min="1" style="width:60px; text-align:center;">
+      <input id="qty" type="number" value="1" min="1">
       <button onclick="changeQty(1)">+</button>
     </div>
 
-    <p><strong>Total: ₹<span id="total">0</span></strong></p>
+    <p style="font-size:18px;">
+      <strong>Total: ₹<span id="total">0</span></strong>
+    </p>
 
-    <button class="primary-btn" onclick="confirmOrder()">Confirm Order</button>
+    <button class="primary-btn" style="margin-top:20px;" onclick="confirmOrder()">
+      Confirm Order
+    </button>
   </div>
 
 </main>
@@ -107,7 +162,6 @@ async function confirmOrder() {
   const userData = userDoc.data() || {};
   const address = userData.address || {};
 
-  // Profile validation (no alert)
   if (!userData.phone ||
       !address.house ||
       !address.city ||
@@ -126,7 +180,6 @@ async function confirmOrder() {
 
   let assignedTo = null;
 
-  // SAFE AUTO ASSIGN (NO settings update)
   if (autoAssign && agents.length > 0) {
     const randomIndex = Math.floor(Math.random() * agents.length);
     assignedTo = agents[randomIndex];
@@ -142,8 +195,7 @@ async function confirmOrder() {
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   });
 
-  // Success UI inside page (no alert, no redirect)
-  document.querySelector(".card").innerHTML = `
+  document.querySelector(".order-card").innerHTML = `
     <h2 style="margin-bottom:15px;">Order Placed Successfully</h2>
     <p style="margin-bottom:20px; opacity:0.8;">
       Your order has been received and is being processed.
@@ -154,7 +206,6 @@ async function confirmOrder() {
   `;
 }
 </script>
-
 
 </body>
 </html>
