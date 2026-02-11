@@ -3,26 +3,104 @@
 <head>
   <title>Complete Profile</title>
   <link rel="stylesheet" href="css/style.css">
+
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
-
 </head>
-<body class="center">
 
-<h2>Complete Your Profile</h2>
+<body>
 
-<input id="name" placeholder="Full Name">
-<input id="phone" placeholder="Phone Number">
+<header>
+  <img src="assets/logo.png" class="logo" />
+</header>
 
-<input id="house" placeholder="House / Flat">
-<input id="street" placeholder="Street / Area">
-<input id="city" placeholder="City">
-<input id="pincode" placeholder="Pincode">
+<main class="center">
 
-<button onclick="saveProfile()">Save & Continue</button>
+  <div class="card" style="width: 400px; max-width: 95%;">
+    <h2 style="margin-bottom:20px;">Complete Your Profile</h2>
 
-<script src="js/profile.js"></script>
+    <input id="name" placeholder="Full Name" class="input-field">
+    <input id="phone" placeholder="Phone Number" class="input-field">
+
+    <div style="margin-top:20px;">
+      <h4 style="margin-bottom:10px;">Delivery Address</h4>
+
+      <input id="house" placeholder="House / Flat" class="input-field">
+      <input id="street" placeholder="Street / Area" class="input-field">
+      <input id="city" placeholder="City" class="input-field">
+      <input id="pincode" placeholder="Pincode" class="input-field">
+    </div>
+
+    <button class="primary-btn" style="margin-top:20px;" onclick="saveProfile()">
+      Save & Continue
+    </button>
+  </div>
+
+</main>
+
+<script src="js/firebase.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  firebase.auth().onAuthStateChanged(async (user) => {
+
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    const doc = await db.collection("users").doc(user.uid).get();
+    const data = doc.data();
+
+    if (!data) return;
+
+    // Prefill existing values
+    if (data.name) document.getElementById("name").value = data.name;
+    if (data.phone) document.getElementById("phone").value = data.phone;
+
+    if (data.address) {
+      if (data.address.house) document.getElementById("house").value = data.address.house;
+      if (data.address.street) document.getElementById("street").value = data.address.street;
+      if (data.address.city) document.getElementById("city").value = data.address.city;
+      if (data.address.pincode) document.getElementById("pincode").value = data.address.pincode;
+    }
+
+  });
+
+});
+
+async function saveProfile() {
+
+  const user = firebase.auth().currentUser;
+
+  const updatedData = {
+    name: document.getElementById("name").value,
+    phone: document.getElementById("phone").value,
+    address: {
+      house: document.getElementById("house").value,
+      street: document.getElementById("street").value,
+      city: document.getElementById("city").value,
+      pincode: document.getElementById("pincode").value
+    }
+  };
+
+  await db.collection("users").doc(user.uid).update(updatedData);
+
+  window.location.href = "order.html";
+}
+</script>
+
+<style>
+.input-field {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: none;
+}
+</style>
+
 </body>
 </html>
