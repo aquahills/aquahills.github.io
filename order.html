@@ -227,11 +227,15 @@ async function confirmOrder() {
   const userDoc = await db.collection("users").doc(user.uid).get();
   const userData = userDoc.data() || {};
   const address = userData.address || {};
+  const isGuest = userData.guest === true;
 
-  if (!userData.phone ||
-      !address.house ||
-      !address.city ||
-      !address.pincode) {
+  if (!isGuest && (
+    !userData.phone ||
+    !address.house ||
+    !address.city ||
+    !address.pincode
+)) {
+
 
     window.location.href = "address.html?incomplete=true";
     return;
