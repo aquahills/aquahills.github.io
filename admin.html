@@ -345,10 +345,13 @@ width:100% !important;
 <div class="menu-btn" onclick="toggleSidebar()">☰</div>
 
 <div class="nav-buttons">
+<button id="adminBackBtn" style="display:none;" onclick="navigate('dashboard')">
+Back
+</button>
 <button onclick="window.location.href='index.html'">Home</button>
 <button onclick="logout()">Logout</button>
 </div>
-</div>
+
 
 <img src="assets/logo.png" class="logo">
 
@@ -401,13 +404,24 @@ showSection("dashboard")
 function logout(){firebase.auth().signOut().then(()=>location.href="index.html")}
 
 function showSection(s){
-if(s==="dashboard")loadDashboard()
+
+const backBtn = document.getElementById("adminBackBtn")
+
+if(s === "dashboard"){
+backBtn.style.display = "none"
+loadDashboard()
+return
+}
+
+backBtn.style.display = "inline-block"
+
 if(s==="users")loadUsers()
 if(s==="activeOrders")loadActiveOrders()
 if(s==="ordersSummary")loadOrdersSummary()
 if(s==="settings")loadSettings()
 if(s==="assignOrders")loadAssignOrders()
 }
+
 
 async function loadAssignOrders(){
 
