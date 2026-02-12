@@ -216,10 +216,22 @@ document.addEventListener("DOMContentLoaded", () => {
 async function saveProfile() {
 
   const user = firebase.auth().currentUser;
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+
+  if (!phone) {
+    alert("Phone number is required.");
+    return;
+  }
 
   const updatedData = {
-    name: document.getElementById("name").value,
-    phone: document.getElementById("phone").value,
+    name: name,
+    phone: phone,
     address: {
       house: document.getElementById("house").value,
       street: document.getElementById("street").value,
@@ -228,10 +240,11 @@ async function saveProfile() {
     }
   };
 
-  await db.collection("users").doc(user.uid).update(updatedData);
+  await db.collection("users").doc(user.uid).set(updatedData, { merge:true });
 
   window.location.href = "order.html";
 }
+
 </script>
 
 </body>
