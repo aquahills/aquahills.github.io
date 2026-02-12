@@ -133,35 +133,104 @@ nav button:hover {
 
 /* ===== FOOTER ===== */
 
-.footer {
-  background: rgba(0,0,0,0.35);
-  padding: 40px 30px 20px;
-  margin-top: auto; /* keeps footer at bottom */
-}
+/* ===== PROFESSIONAL FOOTER ===== */
 
-.footer-container {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.footer h3,
-.footer h4 {
-  margin-bottom: 10px;
-}
-
-.footer p {
-  margin: 4px 0;
-  font-size: 14px;
-}
-
-.footer-bottom {
+.footer{
+  background: rgba(0,0,0,0.55);
+  padding: 60px 20px 30px;
   text-align: center;
-  margin-top: 25px;
-  opacity: 0.7;
-  font-size: 13px;
 }
+
+.footer-container{
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 80px;
+  flex-wrap: wrap;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.footer-brand,
+.footer-contact{
+  min-width: 250px;
+}
+
+.footer h3{
+  font-size: 20px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.footer h4{
+  font-size: 16px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+.footer .tagline{
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 15px;
+}
+
+.footer p{
+  font-size: 14px;
+  margin: 6px 0;
+  opacity: 0.85;
+}
+
+.footer a{
+  color: white;
+  text-decoration: none;
+  margin-left: 6px;
+  font-weight: 500;
+}
+
+.footer a:hover{
+  text-decoration: underline;
+}
+
+.social-icons{
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  font-size: 18px;
+}
+
+.social-icons i{
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.social-icons i:hover{
+  color: #00e1ff;
+  transform: scale(1.15);
+}
+
+.footer-bottom{
+  margin-top: 35px;
+  font-size: 13px;
+  opacity: 0.6;
+}
+
+/* ===== MOBILE OPTIMIZATION ===== */
+
+@media(max-width:768px){
+
+  .footer-container{
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .footer{
+    padding: 50px 15px 25px;
+  }
+
+}
+
 
 /* ===== LOGIN PAGE CENTERING ===== */
 
