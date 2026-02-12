@@ -406,17 +406,18 @@ renderTable("Active Orders",rows)
 async function loadAssignedOrders(uid){
 
 if(!uid) return;
+
 const homeBtn = document.getElementById("homeNavBtn");
 homeBtn.style.display = "inline-block";
 homeBtn.onclick = () => location.reload();
 
-
 document.getElementById("heroSection").style.display="none"
 document.querySelector(".carousel-container").style.display="none"
 
+try{
+
 const snap=await db.collection("orders")
 .where("assignedTo","==",uid)
-.where("status","in",["Pending","Assigned"])
 .get()
 
 let rows=""
@@ -424,6 +425,9 @@ let rows=""
 for(const doc of snap.docs){
 
 const o=doc.data()
+
+// FRONTEND STATUS FILTER (NO FIRESTORE INDEX NEEDED)
+if(o.status === "Delivered") continue;
 
 const userDoc=await db.collection("users").doc(o.customerId).get()
 const u=userDoc.data()||{}
@@ -452,10 +456,8 @@ Mark Delivered
 document.getElementById("mainContent").innerHTML = `
 <div style="width:100%;padding:40px 20px;display:flex;justify-content:center;">
 
-<div style="width:100%;max-width:1100px;position:relative;">
+<div style="width:100%;max-width:1100px;">
   
-
-
 <div style="
 background:rgba(255,255,255,0.15);
 backdrop-filter:blur(15px);
@@ -465,9 +467,6 @@ width:100%;
 box-shadow:0 10px 35px rgba(0,0,0,0.3);
 text-align:center;
 ">
-
-
-
 
 <h2 style="margin-bottom:25px;">Assigned Orders</h2>
 
@@ -489,8 +488,29 @@ ${rows||"<tr><td colspan='5' style='padding:20px;'>No Orders Assigned</td></tr>"
 
 </div>
 </div>
+</div>
 `
+
+}catch(error){
+console.error("Assigned orders error:", error);
+
+document.getElementById("mainContent").innerHTML = `
+<div style="display:flex;justify-content:center;padding:40px;">
+<div style="
+background:rgba(255,255,255,0.15);
+padding:30px;
+border-radius:20px;
+text-align:center;
+max-width:500px;
+width:100%;">
+<h2>Unable to load assigned orders</h2>
+<p style="opacity:0.8;margin-top:10px;">Please try again.</p>
+</div>
+</div>`
 }
+
+}
+
 
 
 function renderTable(title,rows){
