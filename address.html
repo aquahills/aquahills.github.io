@@ -112,7 +112,7 @@
 
 <main class="center">
 
-  <div id="messageArea" style="width:100%;max-width:420px;"></div>
+  <div id="messageArea" style="width:100%;max-width:420px;display:flex;justify-content:center;margin-bottom:25px;"></div>
 
   <div class="card profile-card">
     <h2 style="margin-bottom:20px;">Complete Your Profile</h2>
@@ -178,7 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const params = new URLSearchParams(window.location.search);
   if (params.get("incomplete") === "true") {
     document.getElementById("messageArea").innerHTML = `
-      <div class="card" style="margin-bottom:20px;text-align:center;">
+  <div class="card" style="width:100%;max-width:420px;text-align:center;">
         <h3 style="margin-bottom:10px;">Almost There</h3>
         <p style="opacity:0.8;">
           Please complete your delivery details so we can process your order.
