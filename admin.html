@@ -11,6 +11,64 @@
 <style>
 body{margin:0;overflow-x:hidden}
 
+/* ===== MOBILE HEADER FIX (same style as order.html) ===== */
+@media(max-width:768px){
+
+.topbar-row{
+flex-direction:column;
+align-items:center;
+gap:15px;
+}
+
+.nav-buttons{
+flex-direction:column;
+align-items:center;
+width:100%;
+}
+
+.nav-buttons button{
+width:100%;
+max-width:280px;
+}
+
+.logo{
+height:85px !important;
+}
+
+}
+
+/* ===== TABLE SCROLL FIX (same as orders.html) ===== */
+.table-wrapper{
+width:100%;
+overflow-x:auto;
+-webkit-overflow-scrolling:touch;
+}
+
+table{
+min-width:600px;
+}
+
+/* ===== MOBILE STACK CONTROLS ===== */
+@media(max-width:768px){
+
+.controls{
+flex-direction:column;
+align-items:center;
+}
+
+.controls input,
+.controls select{
+width:100%;
+max-width:300px;
+}
+
+.action-group{
+flex-direction:column;
+align-items:center;
+}
+
+}
+
 .topbar{
 display:flex;
 flex-direction:column;
@@ -335,6 +393,7 @@ Assign
 contentArea.innerHTML=`
 <div class="admin-card">
 <h2>Assign Pending Orders</h2>
+<div class="table-wrapper">
 <table>
 <tr>
 <th>Order ID</th>
@@ -345,6 +404,7 @@ contentArea.innerHTML=`
 </tr>
 ${rows||"<tr><td colspan='5'>No Unassigned Orders</td></tr>"}
 </table>
+</div>
 </div>`
 }
 
@@ -411,6 +471,7 @@ Show All Orders
 contentArea.innerHTML=`
 <div class="admin-card">
 <h2>Orders Summary</h2>
+<div class="table-wrapper">
 <table>
 <tr>
 <th>Name</th>
@@ -420,6 +481,7 @@ contentArea.innerHTML=`
 </tr>
 ${rows}
 </table>
+</div>
 </div>`
 }
 
@@ -440,6 +502,7 @@ rows+=`
 contentArea.innerHTML=`
 <div class="admin-card">
 <h2>User Orders</h2>
+<div class="table-wrapper">
 <table>
 <tr>
 <th>Bottles</th>
@@ -452,6 +515,7 @@ ${rows}
 <button class="theme-btn" onclick="navigate('ordersSummary')">
 Back
 </button>
+</div>
 </div>
 </div>`
 }
@@ -481,7 +545,7 @@ rows+=`
 contentArea.innerHTML=`
 <div class="admin-card">
 <h2>All Users</h2>
-
+<div class="table-wrapper">
 <div class="controls">
 <input type="text" id="searchInput" placeholder="Search..." onkeyup="searchUsers()">
 <select id="roleFilter" onchange="filterUsers()">
@@ -502,6 +566,7 @@ contentArea.innerHTML=`
 </tr>
 ${rows}
 </table>
+</div>
 </div>`
 }
 
@@ -596,6 +661,7 @@ rows+=`
 contentArea.innerHTML=`
 <div class="admin-card">
 <h2>Active Orders</h2>
+<div class="table-wrapper">
 <table>
 <tr>
 <th>Name</th>
@@ -606,6 +672,7 @@ contentArea.innerHTML=`
 </tr>
 ${rows}
 </table>
+</div>
 </div>`
 }
 
