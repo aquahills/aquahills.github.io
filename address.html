@@ -129,6 +129,16 @@
     <input id="city" placeholder="City" class="input-field">
     <input id="pincode" placeholder="Pincode" class="input-field">
 
+<div id="formError" style="
+  margin-top:10px;
+  margin-bottom:10px;
+  color:#ffb3b3;
+  font-size:14px;
+  display:none;
+">
+</div>
+
+    
     <button class="primary-btn" style="margin-top:20px;" onclick="saveProfile()">
       Save & Continue
     </button>
@@ -225,9 +235,12 @@ async function saveProfile() {
   const phone = document.getElementById("phone").value.trim();
 
   if (!phone) {
-    alert("Phone number is required.");
-    return;
-  }
+  const errorDiv = document.getElementById("formError");
+  errorDiv.innerText = "Phone number is required.";
+  errorDiv.style.display = "block";
+  return;
+}
+document.getElementById("formError").style.display = "none";
 
   const updatedData = {
     name: name,
