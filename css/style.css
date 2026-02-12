@@ -220,19 +220,33 @@ nav button:hover {
   opacity: 0.6;
 }
 
-/* ===== MOBILE ===== */
+/* ===== MOBILE FIX ===== */
 
 @media(max-width:768px){
 
   .footer-container{
     flex-direction: column;
-    gap: 50px;
+    align-items: center;
+    gap: 35px;      /* tighter spacing */
+  }
+
+  .footer-brand,
+  .footer-contact{
+    min-width: unset;   /* REMOVE forced width */
+    width: 100%;
+    max-width: 400px;   /* keep it neat */
   }
 
   .footer{
-    padding: 60px 15px 35px;
+    padding: 55px 15px 30px;
+  }
+
+  .footer-bottom{
+    margin-top: 35px;
+    padding-top: 20px;
   }
 }
+
 
 
 
