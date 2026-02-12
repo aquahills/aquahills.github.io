@@ -698,7 +698,10 @@ loadUsers()
 
 /* ACTIVE ORDERS (unchanged logic) */
 async function loadActiveOrders(){
-const snap=await db.collection("orders").where("status","!=","Delivered").get()
+const snap=await db.collection("orders")
+.where("status","in",["Pending","Assigned"])
+.get()
+
 let rows=""
 for(const doc of snap.docs){
 const o=doc.data()
