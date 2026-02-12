@@ -229,17 +229,21 @@ async function confirmOrder() {
   const address = userData.address || {};
   const isGuest = userData.guest === true;
 
-  if (!isGuest && (
-    !userData.phone ||
+  // Phone is required for everyone
+if (!userData.phone) {
+  window.location.href = "address.html?incomplete=true";
+  return;
+}
+
+// Address required only for non-guest users
+if (!isGuest && (
     !address.house ||
     !address.city ||
     !address.pincode
 )) {
-
-
-    window.location.href = "address.html?incomplete=true";
-    return;
-  }
+  window.location.href = "address.html?incomplete=true";
+  return;
+}
 
   const settingsDoc = await db.collection("settings").doc("global").get();
   const settings = settingsDoc.data() || {};
