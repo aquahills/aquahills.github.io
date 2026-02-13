@@ -2,8 +2,15 @@
   --primary: #0a5fd8;
   --deep: #062c5c;
   --accent: #00b4ff;
+
+  /* New iOS Glass Variables */
+  --glass-bg: rgba(255,255,255,0.12);
+  --glass-border: rgba(255,255,255,0.25);
+  --glass-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  --ios-blur: blur(25px);
 }
 
+/* Reset */
 * {
   box-sizing: border-box;
 }
@@ -11,14 +18,13 @@
 html, body {
   margin: 0;
   padding: 0;
-  font-family: "Segoe UI", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
   background: linear-gradient(180deg, #062c5c 0%, #0a5fd8 60%, #00b4ff 100%);
   color: white;
   min-height: 100vh;
 }
 
-/* ===== LAYOUT STRUCTURE ===== */
-
+/* Layout */
 body {
   display: flex;
   flex-direction: column;
@@ -28,229 +34,182 @@ main {
   flex: 1;
 }
 
-/* ===== HEADER ===== */
+/* ================= HEADER ================= */
 
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 40px;
+  padding: 25px 40px;
 }
 
 .logo {
-  height: 80px;
+  height: 90px;
 }
+
+/* ================= NAV BUTTONS ================= */
 
 nav {
   display: flex;
-  gap: 12px;
+  gap: 15px;
 }
 
 nav button {
   padding: 14px 35px;
-  border-radius: 35px;
-  border: 2px solid white;
-  background: transparent;
+  border-radius: 40px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: var(--ios-blur);
+  -webkit-backdrop-filter: var(--ios-blur);
   color: white;
   cursor: pointer;
   font-weight: 600;
-  font-size: 16px;
-  transition: 0.3s ease;
-  min-width: 200px;
+  font-size: 15px;
+  transition: all .3s ease;
+  min-width: 180px;
+  box-shadow: var(--glass-shadow);
 }
 
 nav button:hover {
-  background: white;
-  color: var(--primary);
-  transform: scale(1.05);
+  transform: translateY(-3px);
+  background: rgba(255,255,255,0.2);
 }
 
+/* ================= PRIMARY BUTTON ================= */
 
-/* ===== HERO ===== */
-
-.hero {
-  text-align: center;
-  padding: 60px 20px 40px;
-}
-
-.hero h1 {
-  font-size: 36px;
-  margin-bottom: 25px;
-}
-
-.primary-btn {
+.primary-btn,
+.center button {
   padding: 14px 35px;
-  border-radius: 35px;
-  border: none;
-  background: white;
-  color: var(--primary);
-  font-weight: bold;
+  border-radius: 40px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: var(--ios-blur);
+  -webkit-backdrop-filter: var(--ios-blur);
+  color: white;
+  font-weight: 600;
   cursor: pointer;
   font-size: 16px;
-  transition: 0.3s ease;
+  transition: all .3s ease;
+  box-shadow: var(--glass-shadow);
 }
 
-.primary-btn:hover {
-  transform: scale(1.05);
+.primary-btn:hover,
+.center button:hover {
+  transform: translateY(-3px);
+  background: rgba(255,255,255,0.2);
 }
 
-/* ===== CAROUSEL ===== */
-
-.carousel-container {
-  padding: 40px 20px 80px;
-  display: flex;
-  justify-content: center;
-}
-
-.carousel {
-  display: flex;
-  gap: 30px;
-}
+/* ================= GLASS CARD ================= */
 
 .card {
-  background: rgba(255,255,255,0.15);
-  backdrop-filter: blur(15px);
-  padding: 25px;
-  border-radius: 20px;
-  width: 280px;
-  box-shadow: 0 10px 35px rgba(0,0,0,0.3);
-  transition: 0.3s ease;
+  background: var(--glass-bg);
+  backdrop-filter: var(--ios-blur);
+  -webkit-backdrop-filter: var(--ios-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 25px;
+  padding: 30px;
+  box-shadow: var(--glass-shadow);
+  transition: .3s ease;
 }
 
 .card:hover {
-  transform: translateY(-10px);
+  transform: translateY(-6px);
 }
 
-.card h2 {
-  margin-top: 0;
-  font-size: 18px;
-}
+/* ================= HERO ================= */
 
-.card p {
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-/* ===== FOOTER ===== */
-
-/* ===== PROFESSIONAL FOOTER FINAL FIX ===== */
-
-.footer{
-  background: rgba(0,0,0,0.55);
-  padding: 75px 20px 45px;   /* more breathing room */
+.hero {
   text-align: center;
+  padding: 70px 20px 40px;
 }
 
-.footer-container{
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 100px;                 /* wider spacing between columns */
-  flex-wrap: wrap;
-  max-width: 1100px;
-  margin: auto;
-  margin-bottom: 50px;        /* space before copyright */
-}
-
-.footer-brand,
-.footer-contact{
-  min-width: 260px;
-}
-
-/* ✅ SAME SIZE HEADINGS */
-.footer h3,
-.footer h4{
-  font-size: 18px;            /* identical size */
+.hero h1 {
+  font-size: 38px;
   font-weight: 600;
-  margin-bottom: 18px;
   letter-spacing: 0.5px;
 }
 
-/* Tagline */
-.footer .tagline{
-  font-size: 14px;
-  opacity: 0.8;
-  margin-bottom: 20px;
+/* ================= INPUT FIELDS ================= */
+
+input,
+select {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 18px;
+  padding: 12px;
+  color: white;
+  text-align: center;
+  outline: none;
+  transition: .3s;
 }
 
-/* Text */
-.footer p{
-  font-size: 14px;
-  margin: 8px 0;
-  opacity: 0.85;
+input:focus,
+select:focus {
+  background: rgba(255,255,255,0.25);
+  border-color: white;
 }
 
-/* Links */
-.footer a{
+/* ================= TABLES ================= */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  text-align: center;
+}
+
+/* ================= FOOTER ================= */
+
+.footer {
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(20px);
+  padding: 60px 20px 40px;
+  text-align: center;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+  flex-wrap: wrap;
+  max-width: 1100px;
+  margin: auto;
+  margin-bottom: 40px;
+}
+
+.footer h3,
+.footer h4 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.footer a {
   color: white;
   text-decoration: none;
-  margin-left: 6px;
-  font-weight: 500;
 }
 
-.footer a:hover{
+.footer a:hover {
   text-decoration: underline;
 }
 
-/* Social */
-.social-icons{
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  font-size: 18px;
-}
-
-.social-icons i{
-  cursor: pointer;
-  transition: 0.3s ease;
-}
-
-.social-icons i:hover{
-  color: #00e1ff;
-  transform: scale(1.15);
-}
-
-/* ✅ CLEAR COPYRIGHT SEPARATION */
-.footer-bottom{
-  padding-top: 30px;
-  margin-top: 50px;
-  border-top: 1px solid rgba(255,255,255,0.15);
+.footer-bottom {
+  margin-top: 30px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  padding-top: 20px;
+  opacity: .7;
   font-size: 13px;
-  opacity: 0.6;
 }
 
-/* ===== MOBILE FIX ===== */
-
-@media(max-width:768px){
-
-  .footer-container{
-    flex-direction: column;
-    align-items: center;
-    gap: 35px;      /* tighter spacing */
-  }
-
-  .footer-brand,
-  .footer-contact{
-    min-width: unset;   /* REMOVE forced width */
-    width: 100%;
-    max-width: 400px;   /* keep it neat */
-  }
-
-  .footer{
-    padding: 55px 15px 30px;
-  }
-
-  .footer-bottom{
-    margin-top: 35px;
-    padding-top: 20px;
-  }
-}
-
-
-
-
-/* ===== LOGIN PAGE CENTERING ===== */
+/* ================= CENTER PAGE ================= */
 
 .center {
   display: flex;
@@ -258,55 +217,47 @@ nav button:hover {
   justify-content: center;
   align-items: center;
   flex: 1;
-  text-align: center;
   padding: 20px;
+  text-align: center;
 }
 
-.center button {
-  padding: 12px 30px;
-  border-radius: 30px;
-  border: none;
-  background: white;
-  color: var(--primary);
-  font-weight: bold;
-  cursor: pointer;
-}
+/* ================= MOBILE OPTIMIZATION ================= */
 
-/* ===== RESPONSIVE FIX ===== */
+@media(max-width:768px){
 
-@media (max-width: 768px) {
-
-  header {
+  header{
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
+    text-align: center;
   }
 
-  .logo {
-    height: 70px;
+  nav{
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
   }
 
-  nav {
-    flex-wrap: wrap;
-    justify-content: center;
+  nav button{
+    width: 100%;
+    max-width: 280px;
   }
 
-  .hero h1 {
-    font-size: 24px;
+  .hero h1{
+    font-size: 26px;
   }
 
-  /* IMPORTANT: Carousel vertical on mobile */
-  .carousel {
+  .carousel{
     flex-direction: column;
     align-items: center;
   }
 
-  .card {
+  .card{
     width: 100%;
     max-width: 350px;
   }
 
-  .footer-container {
+  .footer-container{
     flex-direction: column;
-    text-align: center;
+    gap: 30px;
   }
 }
