@@ -394,8 +394,10 @@ document.querySelector(".carousel-container").style.display="none"
 
 try{
 
-// 🔹 Fetch all orders (rules will automatically restrict access)
-const snap = await db.collection("orders").get()
+// ✅ ONLY query allowed documents
+const snap = await db.collection("orders")
+.where("assignedTo","==",uid)
+.get()
 
 let rows=""
 
@@ -403,10 +405,7 @@ for(const doc of snap.docs){
 
 const o = doc.data()
 
-// Only show orders assigned to this delivery user
-if(o.assignedTo !== uid) continue;
-
-// Skip delivered
+// Skip delivered in frontend
 if(o.status === "Delivered") continue;
 
 const userDoc = await db.collection("users").doc(o.customerId).get()
@@ -435,9 +434,7 @@ Mark Delivered
 
 document.getElementById("mainContent").innerHTML = `
 <div style="width:100%;padding:40px 20px;display:flex;justify-content:center;">
-
 <div style="width:100%;max-width:1100px;">
-  
 <div style="
 background:rgba(255,255,255,0.15);
 backdrop-filter:blur(15px);
@@ -447,12 +444,9 @@ width:100%;
 box-shadow:0 10px 35px rgba(0,0,0,0.3);
 text-align:center;
 ">
-
 <h2 style="margin-bottom:25px;">Assigned Orders</h2>
-
 <div style="width:100%;overflow-x:auto;">
 <table style="width:100%;border-collapse:collapse;text-align:center;min-width:800px;">
-
 <tr style="border-bottom:1px solid rgba(255,255,255,0.3);">
 <th style="padding:14px;">Name</th>
 <th style="padding:14px;">Phone</th>
@@ -460,12 +454,9 @@ text-align:center;
 <th style="padding:14px;">Address</th>
 <th style="padding:14px;">Action</th>
 </tr>
-
 ${rows||"<tr><td colspan='5' style='padding:20px;'>No Orders Assigned</td></tr>"}
-
 </table>
 </div>
-
 </div>
 </div>
 </div>
