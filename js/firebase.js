@@ -64,3 +64,16 @@ firebase.auth().onAuthStateChanged(async (user)=>{
     localStorage.setItem("guestPhone", data.phone);
   }
 });
+// ===== FCM SETUP =====
+if ("serviceWorker" in navigator) {
+
+  navigator.serviceWorker.register("/firebase-messaging-sw.js")
+  .then((registration) => {
+
+    const messaging = firebase.messaging();
+
+    messaging.useServiceWorker(registration);
+
+  })
+  .catch(err => console.log("SW error", err));
+}
