@@ -923,38 +923,55 @@ msg.remove()
 /* ===========================
    ADMIN REAL-TIME ORDER NOTIFICATIONS
    + VIBRATION
-   + UNREAD COUNTER
+   + SIDEBAR BADGE (ASSIGN ORDERS)
+   + SOFT ALERT SOUND
 =========================== */
 
 let notifiedOrders = new Set();
 let unreadCount = 0;
 
-let notificationSound = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
+// Softer, longer notification tone
+let notificationSound = new Audio("https://actions.google.com/sounds/v1/notifications/notification_3.mp3");
+notificationSound.volume = 1.0; // louder but soft tone
 
-// Create unread badge dynamically
-function createUnreadBadge(){
+function attachBadgeToAssignButton() {
+
+  const sidebarButtons = document.querySelectorAll(".sidebar button");
+  let assignBtn = null;
+
+  sidebarButtons.forEach(btn => {
+    if (btn.innerText.trim() === "Assign Orders") {
+      assignBtn = btn;
+    }
+  });
+
+  if (!assignBtn) return;
+
+  assignBtn.style.position = "relative";
+
   let badge = document.createElement("div");
-  badge.id = "orderBadge";
+  badge.id = "assignOrderBadge";
   badge.style.position = "absolute";
-  badge.style.top = "8px";
-  badge.style.right = "15px";
+  badge.style.top = "-6px";
+  badge.style.right = "-6px";
   badge.style.background = "red";
   badge.style.color = "white";
   badge.style.borderRadius = "50%";
-  badge.style.width = "22px";
+  badge.style.minWidth = "22px";
   badge.style.height = "22px";
   badge.style.fontSize = "12px";
   badge.style.display = "flex";
   badge.style.alignItems = "center";
   badge.style.justifyContent = "center";
   badge.style.fontWeight = "600";
+  badge.style.padding = "0 5px";
   badge.style.display = "none";
 
-  document.body.appendChild(badge);
+  assignBtn.appendChild(badge);
 }
 
 function updateBadge(){
-  const badge = document.getElementById("orderBadge");
+  const badge = document.getElementById("assignOrderBadge");
   if(!badge) return;
 
   if(unreadCount > 0){
@@ -977,9 +994,8 @@ firebase.auth().onAuthStateChanged(async user => {
   const userDoc = await db.collection("users").doc(user.uid).get();
   if (userDoc.data()?.role !== "admin") return;
 
-  createUnreadBadge();
+  attachBadgeToAssignButton();
 
-  // Ask permission once
   if (Notification.permission !== "granted") {
     await Notification.requestPermission();
   }
@@ -997,19 +1013,18 @@ firebase.auth().onAuthStateChanged(async user => {
           if (notifiedOrders.has(orderId)) return;
           notifiedOrders.add(orderId);
 
-          // Increase unread count
           unreadCount++;
           updateBadge();
 
-          // Play sound
+          // Play softer alert
+          notificationSound.currentTime = 0;
           notificationSound.play().catch(()=>{});
 
-          // Vibrate mobile (if supported)
+          // Mobile vibration
           if (navigator.vibrate) {
-            navigator.vibrate([300, 150, 300]);
+            navigator.vibrate([200, 100, 200, 100, 200]);
           }
 
-          // Browser notification
           if (Notification.permission === "granted") {
 
             const notification = new Notification("New Order Received", {
@@ -1032,12 +1047,13 @@ firebase.auth().onAuthStateChanged(async user => {
 
 });
 
-// Reset counter when Assign Orders section is opened manually
+// Clear unread when opening Assign Orders manually
 const originalLoadAssignOrders = loadAssignOrders;
 loadAssignOrders = async function(){
   clearUnread();
   await originalLoadAssignOrders();
 };
+
 
 </script>
 
