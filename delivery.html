@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assigned Orders</title>
+<link rel="stylesheet" href="css/style.css">
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<style>
+.delivery-card{
+width:100%;
+max-width:1100px;
+text-align:center;
+}
+.table-wrapper{
+width:100%;
+overflow-x:auto;
+}
+table{
+width:100%;
+min-width:800px;
+border-collapse:collapse;
+text-align:center;
+}
+th,td{
+padding:14px;
+border-bottom:1px solid rgba(255,255,255,0.2);
+}
+@media(max-width:768px){
+header{
+flex-direction:column;
+gap:15px;
+}
+nav{
+flex-direction:column;
+width:100%;
+align-items:center;
+}
+nav button{
+width:100%;
+max-width:280px;
+}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<img src="assets/logo.png" class="logo"/>
+<nav>
+<button onclick="location.href='index.html'">Home</button>
+<button onclick="logout()">Logout</button>
+</nav>
+</header>
+
+<main class="center" id="contentArea">
+<div class="card delivery-card"><h2>Loading...</h2></div>
+</main>
+
+<script src="js/firebase.js"></script>
+
+<script>
+firebase.auth().onAuthStateChanged(async user=>{
+
+if(!user){
+location.href="login.html"
+return
+}
+
+const userDoc=await db.collection("users").doc(user.uid).get()
+if(userDoc.data()?.role!=="delivery"){
+location.href="index.html"
+return
+}
+
+try{
+
+const snap=await db.collection("orders")
+.where("assignedTo","==",user.uid)
+.get()
+
+let rows=""
+
+for(const doc of snap.docs){
+
+const o=doc.data()
+if(o.status==="Delivered") continue
+
+const customerDoc=await db.collection("users").doc(o.customerId).get()
+const u=customerDoc.data()||{}
+const addr=u.address||{}
+
+const fullAddress=`
+${addr.house||""},
+${addr.street||""},
+${addr.city||""} - ${addr.pincode||""}
+`
+
+rows+=`
+<tr>
+<td>${u.name||""}</td>
+<td>${u.phone||""}</td>
+<td>${o.bottles}</td>
+<td>${fullAddress}</td>
+<td>
+<button class="primary-btn" onclick="markDelivered('${doc.id}')">
+Mark Delivered
+</button>
+</td>
+</tr>`
+}
+
+contentArea.innerHTML=`
+<div class="card delivery-card">
+<h2>Assigned Orders</h2>
+<div class="table-wrapper">
+<table>
+<tr>
+<th>Name</th>
+<th>Phone</th>
+<th>Bottles</th>
+<th>Address</th>
+<th>Action</th>
+</tr>
+${rows||"<tr><td colspan='5'>No Orders Assigned</td></tr>"}
+</table>
+</div>
+</div>`
+
+}catch(e){
+
+contentArea.innerHTML=`
+<div class="card delivery-card">
+<h2>Unable to load assigned orders</h2>
+<p>Please try again.</p>
+</div>`
+
+}
+
+})
+
+async function markDelivered(id){
+await db.collection("orders").doc(id).update({status:"Delivered"})
+location.reload()
+}
+
+function logout(){
+firebase.auth().signOut().then(()=>location.href="index.html")
+}
+</script>
+
+</body>
+</html>
