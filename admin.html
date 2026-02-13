@@ -782,23 +782,110 @@ loadActiveOrders()
 
 /* SETTINGS unchanged */
 async function loadSettings(){
+
 const doc=await db.collection("settings").doc("global").get()
 const price=doc.data()?.price||75
 
 contentArea.innerHTML=`
 <div class="admin-card">
-<h2>Bottle Pricing</h2>
-<div style="display:flex;gap:15px;margin-top:20px;justify-content:center;align-items:center;">
-<input type="number" id="priceInput" value="${price}" style="width:200px;">
-<button class="theme-btn" onclick="savePrice()">Save</button>
+<h2 style="margin-bottom:25px;">Bottle Pricing</h2>
+
+<div style="display:flex;justify-content:center;align-items:center;width:100%;">
+
+<div style="
+display:flex;
+align-items:center;
+justify-content:space-between;
+background:white;
+border-radius:40px;
+width:100%;
+max-width:380px;
+padding:5px;
+box-shadow:0 5px 20px rgba(0,0,0,.25);
+">
+
+<button 
+onclick="changeAdminPrice(-1)"
+class="price-btn"
+style="
+background:#28a745;
+color:white;
+border:none;
+width:50px;
+height:50px;
+border-radius:50%;
+font-size:22px;
+cursor:pointer;
+transition:.2s;
+"
+onmousedown="this.style.opacity='0.7'"
+onmouseup="this.style.opacity='1'"
+ontouchstart="this.style.opacity='0.7'"
+ontouchend="this.style.opacity='1'"
+>
++
+</button>
+
+<div style="
+flex:1;
+text-align:center;
+font-size:20px;
+font-weight:600;
+color:#062c5c;
+">
+₹ <span id="priceValue">${price}</span>
 </div>
+
+<button 
+onclick="changeAdminPrice(1)"
+class="price-btn"
+style="
+background:#dc3545;
+color:white;
+border:none;
+width:50px;
+height:50px;
+border-radius:50%;
+font-size:22px;
+cursor:pointer;
+transition:.2s;
+"
+onmousedown="this.style.opacity='0.7'"
+onmouseup="this.style.opacity='1'"
+ontouchstart="this.style.opacity='0.7'"
+ontouchend="this.style.opacity='1'"
+>
+−
+</button>
+
+</div>
+
+</div>
+
+<div style="margin-top:25px;">
+<button class="theme-btn" onclick="savePrice()">
+Save
+</button>
+</div>
+
 </div>`
 }
+  
+function changeAdminPrice(change){
+const priceEl = document.getElementById("priceValue")
+let current = Number(priceEl.innerText)
+current += change
+if(current < 1) current = 1
+priceEl.innerText = current
+}
+
 
 async function savePrice(){
 
+const newPrice = Number(document.getElementById("priceValue").innerText)
+
 await db.collection("settings").doc("global").update({
-price:Number(priceInput.value)
+price:newPrice
 })
 
 const card = document.querySelector(".admin-card")
@@ -815,6 +902,7 @@ msg.remove()
 },2500)
 
 }
+
 
 </script>
 
