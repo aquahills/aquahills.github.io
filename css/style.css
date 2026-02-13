@@ -3,11 +3,10 @@
   --deep: #062c5c;
   --accent: #00b4ff;
 
-  /* New iOS Glass Variables */
-  --glass-bg: rgba(255,255,255,0.12);
+  --glass-bg: rgba(255,255,255,0.08);
+  --glass-strong: rgba(255,255,255,0.15);
   --glass-border: rgba(255,255,255,0.25);
-  --glass-shadow: 0 8px 32px rgba(0,0,0,0.25);
-  --ios-blur: blur(25px);
+  --shadow-soft: 0 10px 40px rgba(0,0,0,0.35);
 }
 
 /* Reset */
@@ -19,9 +18,12 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
-  background: linear-gradient(180deg, #062c5c 0%, #0a5fd8 60%, #00b4ff 100%);
   color: white;
   min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 30%, #0f3e87 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, #004b9f 0%, transparent 40%),
+    linear-gradient(180deg, #031d3f 0%, #0a5fd8 100%);
 }
 
 /* Layout */
@@ -34,8 +36,7 @@ main {
   flex: 1;
 }
 
-/* ================= HEADER ================= */
-
+/* HEADER */
 header {
   display: flex;
   justify-content: space-between;
@@ -47,129 +48,128 @@ header {
   height: 90px;
 }
 
-/* ================= NAV BUTTONS ================= */
-
+/* NAV */
 nav {
   display: flex;
   gap: 15px;
 }
 
 nav button {
-  padding: 14px 35px;
-  border-radius: 40px;
+  padding: 14px 30px;
+  border-radius: 50px;
   border: 1px solid var(--glass-border);
   background: var(--glass-bg);
-  backdrop-filter: var(--ios-blur);
-  -webkit-backdrop-filter: var(--ios-blur);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   color: white;
-  cursor: pointer;
   font-weight: 600;
   font-size: 15px;
-  transition: all .3s ease;
-  min-width: 180px;
-  box-shadow: var(--glass-shadow);
+  cursor: pointer;
+  transition: .3s ease;
+  box-shadow: var(--shadow-soft);
 }
 
 nav button:hover {
+  background: var(--glass-strong);
   transform: translateY(-3px);
-  background: rgba(255,255,255,0.2);
 }
 
-/* ================= PRIMARY BUTTON ================= */
+/* HERO */
+.hero {
+  text-align: center;
+  padding: 90px 20px 60px;
+}
 
-.primary-btn,
-.center button {
-  padding: 14px 35px;
-  border-radius: 40px;
+.hero h1 {
+  font-size: 42px;
+  font-weight: 600;
+  letter-spacing: .5px;
+  max-width: 900px;
+  margin: auto;
+}
+
+/* PRIMARY BUTTON */
+.primary-btn {
+  padding: 14px 40px;
+  border-radius: 50px;
   border: 1px solid var(--glass-border);
-  background: var(--glass-bg);
-  backdrop-filter: var(--ios-blur);
-  -webkit-backdrop-filter: var(--ios-blur);
+  background: var(--glass-strong);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
   color: white;
   font-weight: 600;
-  cursor: pointer;
   font-size: 16px;
-  transition: all .3s ease;
-  box-shadow: var(--glass-shadow);
+  cursor: pointer;
+  transition: .3s ease;
+  box-shadow: var(--shadow-soft);
 }
 
-.primary-btn:hover,
-.center button:hover {
-  transform: translateY(-3px);
-  background: rgba(255,255,255,0.2);
+.primary-btn:hover {
+  transform: translateY(-4px);
+  background: rgba(255,255,255,0.22);
 }
 
-/* ================= GLASS CARD ================= */
+/* CARDS */
+.carousel-container {
+  padding: 40px 20px 80px;
+  display: flex;
+  justify-content: center;
+}
+
+.carousel {
+  display: flex;
+  gap: 40px;
+}
 
 .card {
   background: var(--glass-bg);
-  backdrop-filter: var(--ios-blur);
-  -webkit-backdrop-filter: var(--ios-blur);
   border: 1px solid var(--glass-border);
-  border-radius: 25px;
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
   padding: 30px;
-  box-shadow: var(--glass-shadow);
+  border-radius: 25px;
+  width: 300px;
+  text-align: center;
+  box-shadow: var(--shadow-soft);
   transition: .3s ease;
 }
 
 .card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-8px);
+  background: var(--glass-strong);
 }
 
-/* ================= HERO ================= */
-
-.hero {
-  text-align: center;
-  padding: 70px 20px 40px;
+.card h2 {
+  margin-top: 0;
+  font-size: 20px;
 }
 
-.hero h1 {
-  font-size: 38px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+.card p {
+  font-size: 14px;
+  opacity: .85;
+  line-height: 1.6;
 }
 
-/* ================= INPUT FIELDS ================= */
-
-input,
-select {
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.3);
+/* INPUTS */
+input, select {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid var(--glass-border);
   backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
   border-radius: 18px;
   padding: 12px;
   color: white;
   text-align: center;
-  outline: none;
-  transition: .3s;
-}
-
-input:focus,
-select:focus {
-  background: rgba(255,255,255,0.25);
-  border-color: white;
-}
-
-/* ================= TABLES ================= */
-
-table {
   width: 100%;
-  border-collapse: collapse;
-  border-radius: 20px;
-  overflow: hidden;
 }
 
-th, td {
-  padding: 14px;
-  border-bottom: 1px solid rgba(255,255,255,0.2);
-  text-align: center;
+input:focus {
+  outline: none;
+  background: rgba(255,255,255,0.18);
 }
 
-/* ================= FOOTER ================= */
-
+/* FOOTER */
 .footer {
-  background: rgba(0,0,0,0.4);
+  background: rgba(0,0,0,0.35);
   backdrop-filter: blur(20px);
   padding: 60px 20px 40px;
   text-align: center;
@@ -185,50 +185,20 @@ th, td {
   margin-bottom: 40px;
 }
 
-.footer h3,
-.footer h4 {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 15px;
-}
-
-.footer a {
-  color: white;
-  text-decoration: none;
-}
-
-.footer a:hover {
-  text-decoration: underline;
-}
-
 .footer-bottom {
   margin-top: 30px;
-  border-top: 1px solid rgba(255,255,255,0.2);
+  border-top: 1px solid rgba(255,255,255,0.15);
   padding-top: 20px;
   opacity: .7;
   font-size: 13px;
 }
 
-/* ================= CENTER PAGE ================= */
-
-.center {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  flex: 1;
-  padding: 20px;
-  text-align: center;
-}
-
-/* ================= MOBILE OPTIMIZATION ================= */
-
+/* MOBILE */
 @media(max-width:768px){
 
   header{
     flex-direction: column;
     gap: 20px;
-    text-align: center;
   }
 
   nav{
@@ -253,7 +223,7 @@ th, td {
 
   .card{
     width: 100%;
-    max-width: 350px;
+    max-width: 340px;
   }
 
   .footer-container{
