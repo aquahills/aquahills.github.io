@@ -4,7 +4,6 @@
   --accent: #00b4ff;
 }
 
-/* ===== RESET ===== */
 * {
   box-sizing: border-box;
 }
@@ -18,38 +17,33 @@ html, body {
   min-height: 100vh;
 }
 
-/* CENTER EVERYTHING */
+/* ===== LAYOUT STRUCTURE ===== */
+
 body {
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
 main {
   flex: 1;
-  width: 100%;
-  display: flex;
-  justify-content: center;
 }
 
-/* ================= HEADER ================= */
+/* ===== HEADER ===== */
 
 header {
-  width: 100%;
-  max-width: 1200px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 25px 20px;
+  padding: 20px 40px;
 }
 
 .logo {
-  height: 90px;
+  height: 80px;
 }
 
 nav {
   display: flex;
-  gap: 15px;
+  gap: 12px;
 }
 
 nav button {
@@ -62,30 +56,21 @@ nav button {
   font-weight: 600;
   font-size: 16px;
   transition: 0.3s ease;
+  min-width: 200px;
 }
 
 nav button:hover {
   background: white;
   color: var(--primary);
+  transform: scale(1.05);
 }
 
-/* ================= CONTENT WRAPPER ================= */
 
-.wrapper,
-.content,
-.center {
-  width: 100%;
-  max-width: 1100px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* ================= HERO ================= */
+/* ===== HERO ===== */
 
 .hero {
   text-align: center;
-  padding: 70px 20px 50px;
+  padding: 60px 20px 40px;
 }
 
 .hero h1 {
@@ -93,174 +78,235 @@ nav button:hover {
   margin-bottom: 25px;
 }
 
-/* ================= BUTTONS ================= */
-
-.primary-btn,
-.theme-btn {
+.primary-btn {
   padding: 14px 35px;
   border-radius: 35px;
   border: none;
   background: white;
   color: var(--primary);
-  font-weight: 600;
+  font-weight: bold;
   cursor: pointer;
   font-size: 16px;
   transition: 0.3s ease;
 }
 
-.primary-btn:hover,
-.theme-btn:hover {
+.primary-btn:hover {
   transform: scale(1.05);
 }
 
-.success-btn {
-  background: #00b4ff;
-  color: white;
-}
+/* ===== CAROUSEL ===== */
 
-.danger-btn {
-  background: #ff4d4d;
-  color: white;
-}
-
-/* ================= CARDS ================= */
-
-.card,
-.admin-card {
-  background: rgba(255,255,255,0.18);
-  padding: 30px;
-  border-radius: 20px;
-  width: 100%;
-  max-width: 800px;
-  box-shadow: 0 10px 35px rgba(0,0,0,0.3);
-  margin-bottom: 30px;
-  text-align: center;
-}
-
-/* ================= TABLE ================= */
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-th, td {
-  padding: 14px;
-  border-bottom: 1px solid rgba(255,255,255,0.3);
-  text-align: center;
-  font-size: 15px;
-}
-
-th {
-  font-weight: 600;
-}
-
-/* ================= INPUTS ================= */
-
-input,
-select {
-  width: 100%;
-  max-width: 400px;
-  padding: 12px;
-  border-radius: 25px;
-  border: none;
-  background: rgba(255,255,255,0.9);
-  color: #062c5c;
-  font-size: 14px;
-  margin-bottom: 15px;
-  text-align: center;
-}
-
-/* Fix dropdown white issue */
-select option {
-  background: white;
-  color: black;
-}
-
-/* ================= FOOTER ================= */
-
-.footer {
-  width: 100%;
-  background: rgba(0,0,0,0.6);
-  padding: 60px 20px 40px;
-  margin-top: 60px;
-}
-
-.footer-container {
-  max-width: 1100px;
-  margin: auto;
+.carousel-container {
+  padding: 40px 20px 80px;
   display: flex;
   justify-content: center;
-  gap: 100px;
-  flex-wrap: wrap;
-  text-align: center;
 }
 
-.footer h3,
-.footer h4 {
+.carousel {
+  display: flex;
+  gap: 30px;
+}
+
+.card {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(15px);
+  padding: 25px;
+  border-radius: 20px;
+  width: 280px;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.3);
+  transition: 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+}
+
+.card h2 {
+  margin-top: 0;
   font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 15px;
 }
 
-.footer .tagline {
-  opacity: 0.9;
-  margin-bottom: 15px;
+.card p {
+  font-size: 14px;
+  line-height: 1.5;
 }
 
-.footer-contact p {
-  margin: 10px 0;
-}
+/* ===== FOOTER ===== */
 
-.footer a {
-  color: white;
-  font-weight: 600;
-  text-decoration: none;
-}
+/* ===== PROFESSIONAL FOOTER FINAL FIX ===== */
 
-.footer a:hover {
-  text-decoration: underline;
-  color: #00e1ff;
-}
-
-.footer-bottom {
-  margin-top: 40px;
-  border-top: 1px solid rgba(255,255,255,0.2);
-  padding-top: 20px;
+.footer{
+  background: rgba(0,0,0,0.55);
+  padding: 75px 20px 45px;   /* more breathing room */
   text-align: center;
-  font-size: 13px;
-  opacity: 0.8;
 }
 
-/* ================= MOBILE ================= */
+.footer-container{
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 100px;                 /* wider spacing between columns */
+  flex-wrap: wrap;
+  max-width: 1100px;
+  margin: auto;
+  margin-bottom: 50px;        /* space before copyright */
+}
+
+.footer-brand,
+.footer-contact{
+  min-width: 260px;
+}
+
+/* ✅ SAME SIZE HEADINGS */
+.footer h3,
+.footer h4{
+  font-size: 18px;            /* identical size */
+  font-weight: 600;
+  margin-bottom: 18px;
+  letter-spacing: 0.5px;
+}
+
+/* Tagline */
+.footer .tagline{
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 20px;
+}
+
+/* Text */
+.footer p{
+  font-size: 14px;
+  margin: 8px 0;
+  opacity: 0.85;
+}
+
+/* Links */
+.footer a{
+  color: white;
+  text-decoration: none;
+  margin-left: 6px;
+  font-weight: 500;
+}
+
+.footer a:hover{
+  text-decoration: underline;
+}
+
+/* Social */
+.social-icons{
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 18px;
+}
+
+.social-icons i{
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.social-icons i:hover{
+  color: #00e1ff;
+  transform: scale(1.15);
+}
+
+/* ✅ CLEAR COPYRIGHT SEPARATION */
+.footer-bottom{
+  padding-top: 30px;
+  margin-top: 50px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  font-size: 13px;
+  opacity: 0.6;
+}
+
+/* ===== MOBILE FIX ===== */
 
 @media(max-width:768px){
+
+  .footer-container{
+    flex-direction: column;
+    align-items: center;
+    gap: 35px;      /* tighter spacing */
+  }
+
+  .footer-brand,
+  .footer-contact{
+    min-width: unset;   /* REMOVE forced width */
+    width: 100%;
+    max-width: 400px;   /* keep it neat */
+  }
+
+  .footer{
+    padding: 55px 15px 30px;
+  }
+
+  .footer-bottom{
+    margin-top: 35px;
+    padding-top: 20px;
+  }
+}
+
+
+
+
+/* ===== LOGIN PAGE CENTERING ===== */
+
+.center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  text-align: center;
+  padding: 20px;
+}
+
+.center button {
+  padding: 12px 30px;
+  border-radius: 30px;
+  border: none;
+  background: white;
+  color: var(--primary);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* ===== RESPONSIVE FIX ===== */
+
+@media (max-width: 768px) {
 
   header {
     flex-direction: column;
     gap: 15px;
-    text-align: center;
+  }
+
+  .logo {
+    height: 70px;
   }
 
   nav {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero h1 {
+    font-size: 24px;
+  }
+
+  /* IMPORTANT: Carousel vertical on mobile */
+  .carousel {
     flex-direction: column;
     align-items: center;
   }
 
-  nav button {
+  .card {
     width: 100%;
-    max-width: 280px;
-  }
-
-  .card,
-  .admin-card {
-    max-width: 95%;
+    max-width: 350px;
   }
 
   .footer-container {
     flex-direction: column;
-    gap: 40px;
+    text-align: center;
   }
-
 }
