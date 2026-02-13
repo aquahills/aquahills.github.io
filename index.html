@@ -394,22 +394,24 @@ document.querySelector(".carousel-container").style.display="none"
 
 try{
 
-const snap=await db.collection("orders")
-.where("assignedTo","==",uid)
-.get()
+// 🔹 Fetch all orders (rules will automatically restrict access)
+const snap = await db.collection("orders").get()
 
 let rows=""
 
 for(const doc of snap.docs){
 
-const o=doc.data()
+const o = doc.data()
 
-// FRONTEND STATUS FILTER (NO FIRESTORE INDEX NEEDED)
+// Only show orders assigned to this delivery user
+if(o.assignedTo !== uid) continue;
+
+// Skip delivered
 if(o.status === "Delivered") continue;
 
-const userDoc=await db.collection("users").doc(o.customerId).get()
-const u=userDoc.data()||{}
-const addr=u.address||{}
+const userDoc = await db.collection("users").doc(o.customerId).get()
+const u = userDoc.data() || {}
+const addr = u.address || {}
 
 const fullAddress = `
 ${addr.house||""},
@@ -470,6 +472,7 @@ ${rows||"<tr><td colspan='5' style='padding:20px;'>No Orders Assigned</td></tr>"
 `
 
 }catch(error){
+
 console.error("Assigned orders error:", error);
 
 document.getElementById("mainContent").innerHTML = `
@@ -481,15 +484,13 @@ border-radius:20px;
 text-align:center;
 max-width:500px;
 width:100%;">
-<h2>Unable to load assigned orders</h2>
-<p style="opacity:0.8;margin-top:10px;">Please try again.</p>
+<h2>No Assigned Orders</h2>
+<p style="opacity:0.8;margin-top:10px;">You currently have no active deliveries.</p>
 </div>
 </div>`
 }
 
 }
-
-
 
 function renderTable(title,rows){
 document.getElementById("homeNavBtn").style.display = "none";
