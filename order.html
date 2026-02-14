@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Orders</title>
+  <title>Place Order</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/style.css">
 
+  <!-- Font Awesome (same as index) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -12,64 +13,59 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
   <style>
-
-    .logo{
-      height:115px !important;
-    }
-
-    @media(max-width:768px){
-      .logo{
-        height:85px !important;
-      }
-    }
-
-    /* Prevent page overflow */
-    body{
-      overflow-x:hidden;
-    }
-
-    .orders-card{
+    .order-card{
       width:100%;
-      max-width:1000px;
-      text-align:center;
-      overflow:hidden;
-    }
-
-    /* TABLE WRAPPER FIX */
-    .table-wrapper{
-      width:100%;
-      overflow-x:auto;
-      -webkit-overflow-scrolling:touch;
-    }
-
-    table{
-      width:100%;
-      min-width:600px;
-      border-collapse:collapse;
-      color:white;
+      max-width:420px;
       text-align:center;
     }
 
-    th, td{
-      padding:14px;
-      border-bottom:1px solid rgba(255,255,255,0.2);
+    .qty-controls{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:15px;
+      margin:20px 0;
+      flex-wrap:wrap;
     }
 
-    a{
-      color:#00e1ff;
+    .qty-controls button{
+      padding:10px 18px;
+      border-radius:25px;
+      border:none;
+      font-size:18px;
       cursor:pointer;
-      text-decoration:underline;
-      font-weight:600;
     }
 
-    a:hover{
-      opacity:.8;
+    /* ===== MATCH INDEX HEADER EXACTLY ===== */
+
+/* Force large logo like index */
+.logo{
+  height:115px !important;
+}
+
+/* On mobile match index logo size */
+@media(max-width:768px){
+  .logo{
+    height:85px !important;
+  }
+}
+
+/* ===== FIX FOOTER SCATTER ON DESKTOP ===== */
+
+
+
+/* Keep mobile stacking same as index */
+
+
+    .qty-controls input{
+      width:70px;
+      text-align:center;
+      padding:8px;
+      border-radius:10px;
+      border:none;
     }
 
-    /* FOOTER MATCH */
-    
-
-    /* MOBILE HEADER FIX */
+    /* MOBILE ONLY HEADER FIX */
     @media(max-width:768px){
 
       header{
@@ -89,27 +85,45 @@
         width:100%;
         max-width:280px;
       }
-
     }
-
   </style>
 </head>
 
 <body>
 
+<!-- SAME HEADER STRUCTURE AS INDEX -->
 <header>
   <img src="assets/logo.png" class="logo" />
 
   <nav>
-    <button onclick="window.location.href='order.html'">Order</button>
+    <button onclick="window.location.href='orders.html'">My Orders</button>
     <button onclick="window.location.href='index.html'">Home</button>
   </nav>
 </header>
 
-<main class="center" id="contentArea">
-  <div class="card orders-card"><h2>Loading...</h2></div>
+<main class="center">
+
+  <div class="card order-card">
+    <h2>Place Your Order</h2>
+
+    <div class="qty-controls">
+      <button onclick="changeQty(-1)">-</button>
+      <input id="qty" type="number" value="1" min="1">
+      <button onclick="changeQty(1)">+</button>
+    </div>
+
+    <p style="font-size:18px;">
+      <strong>Total: ₹<span id="total">0</span></strong>
+    </p>
+
+    <button class="primary-btn" style="margin-top:20px;" onclick="confirmOrder()">
+      Confirm Order
+    </button>
+  </div>
+
 </main>
 
+<!-- EXACT SAME FOOTER AS INDEX -->
 <footer class="footer">
   <div class="footer-container">
 
@@ -154,122 +168,103 @@
 <script src="js/firebase.js"></script>
 
 <script>
+let currentPrice = 75;
+
 document.addEventListener("DOMContentLoaded", () => {
 
   firebase.auth().onAuthStateChanged(async (user) => {
-
-    const content = document.getElementById("contentArea");
 
     if (!user) {
       window.location.href = "login.html";
       return;
     }
 
-    try {
+    const settingsDoc = await db.collection("settings").doc("global").get();
+    const settings = settingsDoc.data() || {};
+    currentPrice = settings.price || 75;
 
-      const userDoc = await db.collection("users").doc(user.uid).get();
-      const role = userDoc.data().role;
-
-      let query;
-
-      if (role === "admin") {
-        query = db.collection("orders").orderBy("createdAt", "desc");
-      } 
-      else if (role === "delivery") {
-        query = db.collection("orders")
-                  .where("assignedTo", "==", user.uid)
-                  .orderBy("createdAt", "desc");
-      } 
-      else {
-        query = db.collection("orders")
-                  .where("customerId", "==", user.uid)
-                  .orderBy("createdAt", "desc");
-      }
-
-      const snapshot = await query.get();
-
-      if (snapshot.empty) {
-        content.innerHTML = `
-          <div class="card orders-card">
-            <h2>No Orders Yet</h2>
-            <button class="primary-btn" onclick="window.location.href='order.html'">
-              Order Now
-            </button>
-          </div>
-        `;
-        return;
-      }
-
-      if (snapshot.size === 1) {
-        const doc = snapshot.docs[0];
-        showSingleOrder(doc.id, doc.data());
-        return;
-      }
-
-      let rows = "";
-
-      snapshot.forEach(doc => {
-        const o = doc.data();
-        rows += `
-          <tr>
-            <td><a onclick="loadSingleOrder('${doc.id}')">${doc.id}</a></td>
-            <td>${o.status}</td>
-            <td>${o.bottles}</td>
-            <td>₹${o.total}</td>
-          </tr>
-        `;
-      });
-
-      content.innerHTML = `
-        <div class="card orders-card">
-          <h2>Your Orders</h2>
-          <div class="table-wrapper">
-            <table>
-              <tr>
-                <th>Order ID</th>
-                <th>Status</th>
-                <th>Bottles</th>
-                <th>Total</th>
-              </tr>
-              ${rows}
-            </table>
-          </div>
-        </div>
-      `;
-
-    } catch (error) {
-
-      content.innerHTML = `
-        <div class="card orders-card">
-          <h2>Unable to load orders</h2>
-        </div>
-      `;
-    }
-
+    updateTotal();
   });
 
 });
 
-async function loadSingleOrder(orderId) {
-  const doc = await db.collection("orders").doc(orderId).get();
-  if (!doc.exists) return;
-  showSingleOrder(orderId, doc.data());
+function changeQty(change) {
+  const qtyInput = document.getElementById("qty");
+  let qty = Number(qtyInput.value || 1);
+  qty += change;
+  if (qty < 1) qty = 1;
+  qtyInput.value = qty;
+  updateTotal();
 }
 
-function showSingleOrder(orderId, data) {
-  const content = document.getElementById("contentArea");
-  content.innerHTML = `
-    <div class="card orders-card">
-      <h2>Order Details</h2>
-      <p><strong>Order ID:</strong> ${orderId}</p>
-      <p><strong>Status:</strong> ${data.status}</p>
-      <p><strong>Bottles:</strong> ${data.bottles}</p>
-      <p><strong>Total:</strong> ₹${data.total}</p>
-      <br>
-      <button class="primary-btn" onclick="window.location.reload()">
-        Back to Orders
-      </button>
-    </div>
+function updateTotal() {
+  const qty = Number(document.getElementById("qty").value || 1);
+  document.getElementById("total").innerText = qty * currentPrice;
+}
+
+async function confirmOrder() {
+
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  const qty = Number(document.getElementById("qty").value);
+
+  const userDoc = await db.collection("users").doc(user.uid).get();
+  const userData = userDoc.data() || {};
+  const address = userData.address || {};
+  const isGuest = userData.guest === true;
+
+  // Phone is required for everyone
+if (!userData.phone) {
+  window.location.href = "address.html?incomplete=true";
+  return;
+}
+
+// Address required only for non-guest users
+if (!isGuest && (
+    !address.house ||
+    !address.city ||
+    !address.pincode
+)) {
+  window.location.href = "address.html?incomplete=true";
+  return;
+}
+
+  const settingsDoc = await db.collection("settings").doc("global").get();
+  const settings = settingsDoc.data() || {};
+
+  const price = settings.price || 75;
+  const autoAssign = settings.autoAssign;
+  const agents = settings.deliveryAgents || [];
+
+  let assignedTo = null;
+
+  if (autoAssign && agents.length > 0) {
+    const randomIndex = Math.floor(Math.random() * agents.length);
+    assignedTo = agents[randomIndex];
+  }
+
+  await db.collection("orders").add({
+    customerId: user.uid,
+    customerEmail: user.email,
+    bottles: qty,
+    total: qty * price,
+    status: "Pending",
+    assignedTo: assignedTo,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  document.querySelector(".order-card").innerHTML = `
+    <h2 style="margin-bottom:15px;">Order Placed Successfully</h2>
+    <p style="margin-bottom:20px; opacity:0.8;">
+      Your order has been received and is being processed.
+    </p>
+    <button class="primary-btn" onclick="window.location.href='orders.html'">
+      Track Order
+    </button>
   `;
 }
 </script>
