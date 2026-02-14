@@ -176,10 +176,10 @@ document.addEventListener("DOMContentLoaded", () => {
         query = db.collection("orders").orderBy("createdAt", "desc");
       } 
       else if (role === "delivery") {
-        query = db.collection("orders")
-                  .where("assignedTo", "==", user.uid)
-                  .orderBy("createdAt", "desc");
-      } 
+  query = db.collection("orders")
+            .where("assignedTo", "==", user.uid);
+}
+
       else {
         query = db.collection("orders")
                   .where("customerId", "==", user.uid)
