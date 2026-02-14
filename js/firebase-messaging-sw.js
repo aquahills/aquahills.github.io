@@ -10,14 +10,30 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
+// Background push
 messaging.onBackgroundMessage(function(payload) {
 
-  const notificationTitle = "New Order Received";
+  const notificationTitle = payload.notification?.title || "New Order Received";
   const notificationOptions = {
-    body: "A new order needs assignment",
+    body: payload.notification?.body || "A new order needs assignment",
     icon: "/assets/logo.png",
-    requireInteraction: true
+    badge: "/assets/logo.png",
+    requireInteraction: true,
+    data: {
+      url: "/admin.html"
+    }
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+// Click handling
+self.addEventListener("notificationclick", function(event) {
+
+  event.notification.close();
+
+  event.waitUntil(
+    clients.openWindow(event.notification.data.url)
+  );
+
 });
