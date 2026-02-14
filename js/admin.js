@@ -1,267 +1,203 @@
 let deleteUserId = null;
+let unreadCount = 0;
+let audioUnlocked = false;
 
-document.addEventListener("DOMContentLoaded", () => {
+const notificationSound = new Audio("assets/notify.mp3");
+notificationSound.preload = "auto";
+notificationSound.volume = 1.0;
 
-  const sidebar = document.getElementById("sidebar");
-  const overlay = document.getElementById("overlay");
-  const menuBtn = document.getElementById("menuBtn");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const sidebarLogoutBtn = document.getElementById("sidebarLogoutBtn");
+/* ===========================
+   BASIC NAVIGATION
+=========================== */
 
-  menuBtn.addEventListener("click", () => toggleSidebar());
-  overlay.addEventListener("click", closeSidebar);
-
-  logoutBtn.addEventListener("click", logout);
-  sidebarLogoutBtn.addEventListener("click", logout);
-
-  document.querySelectorAll(".sidebar button[data-section]")
-    .forEach(btn => {
-      btn.addEventListener("click", () => {
-        closeSidebar();
-        showSection(btn.dataset.section);
-      });
-    });
-
-  document.getElementById("confirmDeleteBtn").addEventListener("click", confirmDelete);
-  document.getElementById("cancelDeleteBtn").addEventListener("click", closeModal);
-
-  firebase.auth().onAuthStateChanged(async user => {
-
-    if (!user) {
-      location.href = "login.html";
-      return;
-    }
-
-    const doc = await db.collection("users").doc(user.uid).get();
-
-    if (doc.data()?.role !== "admin") {
-      location.href = "index.html";
-      return;
-    }
-
-    showSection("dashboard");
-  });
-
-});
-
-
-function toggleSidebar() {
+function toggleSidebar(){
   sidebar.classList.toggle("active");
   overlay.classList.toggle("active");
 }
 
-function closeSidebar() {
+function closeSidebar(){
   sidebar.classList.remove("active");
   overlay.classList.remove("active");
 }
 
-function logout() {
-  firebase.auth().signOut().then(() => location.href = "index.html");
+function navigate(s){
+  closeSidebar();
+  showSection(s);
 }
 
-function showSection(section) {
-  if (section === "dashboard") loadDashboard();
-  if (section === "ordersSummary") loadOrdersSummary();
-  if (section === "assignOrders") loadAssignOrders();
-  if (section === "users") loadUsers();
-  if (section === "settings") loadSettings();
+function logout(){
+  firebase.auth().signOut().then(()=>location.href="index.html");
 }
 
+/* ===========================
+   AUTH PROTECTION
+=========================== */
 
-/* DASHBOARD */
+firebase.auth().onAuthStateChanged(async user=>{
+  if(!user) return location.href="login.html";
 
-async function loadDashboard() {
+  const doc = await db.collection("users").doc(user.uid).get();
+  if(doc.data()?.role!=="admin") return location.href="index.html";
 
+  showSection("dashboard");
+});
+
+/* ===========================
+   SECTION ROUTER
+=========================== */
+
+function showSection(s){
+  if(s==="dashboard") loadDashboard();
+  if(s==="users") loadUsers();
+  if(s==="activeOrders") loadActiveOrders();
+  if(s==="ordersSummary") loadOrdersSummary();
+  if(s==="settings") loadSettings();
+  if(s==="assignOrders") loadAssignOrders();
+}
+
+/* ===========================
+   DASHBOARD
+=========================== */
+
+async function loadDashboard(){
   const orders = await db.collection("orders").get();
   const users = await db.collection("users").get();
-
-  const active = orders.docs.filter(d => d.data().status !== "Delivered");
+  const active = orders.docs.filter(d=>d.data().status!=="Delivered");
 
   contentArea.innerHTML = `
-    <div class="admin-card">
-      <div class="dashboard-grid">
-        <div class="stat" onclick="showSection('users')">
-          <h2>${users.size}</h2>
-          <p>All Users</p>
-        </div>
-        <div class="stat" onclick="loadActiveOrders()">
-          <h2>${active.length}</h2>
-          <p>Active Orders</p>
-        </div>
+  <div class="admin-card">
+    <div class="dashboard-grid">
+      <div class="stat" onclick="navigate('users')">
+        <h2>👥 ${users.size}</h2>
+        <p>All Users</p>
+      </div>
+      <div class="stat" onclick="navigate('activeOrders')">
+        <h2>📦 ${active.length}</h2>
+        <p>Active Orders</p>
       </div>
     </div>
-  `;
+  </div>`;
 }
 
+/* ===========================
+   ASSIGN ORDERS
+=========================== */
 
-/* ASSIGN ORDERS */
-
-async function loadAssignOrders() {
+async function loadAssignOrders(){
 
   const ordersSnap = await db.collection("orders")
-    .where("status", "==", "Pending")
-    .get();
+  .where("status","==","Pending")
+  .get();
 
   const deliverySnap = await db.collection("users")
-    .where("role", "==", "delivery")
-    .get();
+  .where("role","==","delivery")
+  .get();
 
-  let rows = "";
+  let rows="";
 
-  for (const doc of ordersSnap.docs) {
+  for(const doc of ordersSnap.docs){
 
     const o = doc.data();
-    if (o.assignedTo) continue;
+    if(o.assignedTo) continue;
 
     rows += `
-      <tr>
-        <td>${doc.id}</td>
-        <td>${o.bottles}</td>
-        <td>₹${o.total}</td>
-        <td>
-          <select id="agent_${doc.id}">
-            ${deliverySnap.docs.map(u =>
-              `<option value="${u.id}">
-                ${u.data().name || u.data().email}
-              </option>`
-            ).join("")}
-          </select>
-        </td>
-        <td>
-          <button class="theme-btn success-btn"
-            onclick="assignOrder('${doc.id}')">
-            Assign
-          </button>
-        </td>
-      </tr>
-    `;
+    <tr>
+      <td>${doc.id}</td>
+      <td>${o.bottles}</td>
+      <td>₹${o.total}</td>
+      <td>
+        <select id="agent_${doc.id}">
+          ${deliverySnap.docs.map(u=>`
+            <option value="${u.id}">
+              ${u.data().name||u.data().email}
+            </option>
+          `).join("")}
+        </select>
+      </td>
+      <td>
+        <button class="theme-btn success-btn"
+        onclick="assignOrder('${doc.id}')">
+        Assign
+        </button>
+      </td>
+    </tr>`;
   }
 
   contentArea.innerHTML = `
-    <div class="admin-card">
-      <h2>Assign Pending Orders</h2>
-      <div class="table-wrapper">
-        <table>
-          <tr>
-            <th>Order ID</th>
-            <th>Bottles</th>
-            <th>Total</th>
-            <th>Delivery Agent</th>
-            <th>Action</th>
-          </tr>
-          ${rows || "<tr><td colspan='5'>No Unassigned Orders</td></tr>"}
-        </table>
-      </div>
+  <div class="admin-card">
+    <h2>Assign Pending Orders</h2>
+    <div class="table-wrapper">
+      <table>
+        <tr>
+          <th>Order ID</th>
+          <th>Bottles</th>
+          <th>Total</th>
+          <th>Delivery Agent</th>
+          <th>Action</th>
+        </tr>
+        ${rows || "<tr><td colspan='5'>No Unassigned Orders</td></tr>"}
+      </table>
     </div>
-  `;
+  </div>`;
 }
 
-async function assignOrder(orderId) {
-  const agent = document.getElementById("agent_" + orderId).value;
-  await db.collection("orders").doc(orderId).update({ assignedTo: agent });
+async function assignOrder(orderId){
+  const agent=document.getElementById("agent_"+orderId).value;
+  await db.collection("orders").doc(orderId).update({assignedTo:agent});
   loadAssignOrders();
 }
 
+/* ===========================
+   SETTINGS (single savePrice)
+=========================== */
 
-/* USERS */
-
-async function loadUsers() {
-
-  const snap = await db.collection("users").get();
-  let rows = "";
-
-  snap.forEach(doc => {
-    const u = doc.data();
-
-    rows += `
-      <tr data-id="${doc.id}">
-        <td>${u.name || ""}</td>
-        <td>${u.phone || ""}</td>
-        <td>${u.email || ""}</td>
-        <td>${u.role}</td>
-        <td>
-          <div class="action-group">
-            <button class="theme-btn"
-              onclick="enableEdit('${doc.id}')">
-              Edit
-            </button>
-            <button class="theme-btn danger-btn"
-              onclick="openDelete('${doc.id}')">
-              Delete
-            </button>
-          </div>
-        </td>
-      </tr>
-    `;
-  });
-
-  contentArea.innerHTML = `
-    <div class="admin-card">
-      <h2>All Users</h2>
-      <div class="table-wrapper">
-        <table>
-          <tr>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Action</th>
-          </tr>
-          ${rows}
-        </table>
-      </div>
-    </div>
-  `;
-}
-
-
-function openDelete(id) {
-  deleteUserId = id;
-  document.getElementById("deleteModal").style.display = "flex";
-}
-
-function closeModal() {
-  document.getElementById("deleteModal").style.display = "none";
-  deleteUserId = null;
-}
-
-async function confirmDelete() {
-
-  if (deleteUserId === firebase.auth().currentUser.uid) {
-    alert("You cannot delete yourself.");
-    return;
-  }
-
-  await db.collection("users").doc(deleteUserId).delete();
-  closeModal();
-  loadUsers();
-}
-
-
-/* SETTINGS */
-
-async function loadSettings() {
+async function loadSettings(){
 
   const doc = await db.collection("settings").doc("global").get();
   const price = doc.data()?.price || 75;
 
   contentArea.innerHTML = `
-    <div class="admin-card">
-      <h2>Bottle Pricing Per Unit</h2>
+  <div class="admin-card">
+    <h2>Bottle Pricing Per Unit</h2>
 
-      <div class="pricing-controls">
-        <input type="number" id="priceInput" value="${price}">
-        <button class="theme-btn" onclick="savePrice()">Save</button>
+    <div style="display:flex;gap:15px;margin-top:20px;justify-content:center;align-items:center;">
+
+      <div style="position:relative;">
+        <span style="
+        position:absolute;
+        left:15px;
+        top:50%;
+        transform:translateY(-50%);
+        color:#062c5c;
+        font-weight:600;
+        pointer-events:none;">
+        ₹
+        </span>
+
+        <input type="number" id="priceInput"
+        value="${price}" style="width:200px;padding-left:30px;">
       </div>
+
+      <button class="theme-btn" onclick="savePrice()">
+        Save
+      </button>
+
     </div>
-  `;
+  </div>`;
 }
 
-async function savePrice() {
+async function savePrice(){
 
   await db.collection("settings").doc("global").update({
-    price: Number(document.getElementById("priceInput").value)
+    price:Number(document.getElementById("priceInput").value)
   });
 
-  alert("Price updated successfully.");
+  const card=document.querySelector(".admin-card");
+  const msg=document.createElement("div");
+  msg.style.marginTop="20px";
+  msg.style.opacity="0.9";
+  msg.innerText="Price updated successfully.";
+  card.appendChild(msg);
+
+  setTimeout(()=>msg.remove(),2500);
 }
