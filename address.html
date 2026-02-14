@@ -1,23 +1,92 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Complete Profile | Aquahills</title>
+  <title>Complete Profile</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <link rel="stylesheet" href="css/style.css">
 
+  <!-- Font Awesome (same as other pages) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <style>
+
+    .logo{
+      height:115px !important;
+    }
+
+    @media(max-width:768px){
+      .logo{
+        height:85px !important;
+      }
+    }
+
+    .profile-card{
+      width:100%;
+      max-width:420px;
+      text-align:center;
+    }
+
+    .input-field{
+      width:100%;
+      padding:12px;
+      margin-bottom:12px;
+      border-radius:12px;
+      border:none;
+      text-align:center;
+      font-size:14px;
+    }
+
+    .section-title{
+      margin-top:20px;
+      margin-bottom:10px;
+      font-size:16px;
+      opacity:.9;
+    }
+
+    /* MOBILE HEADER FIX */
+    @media(max-width:768px){
+
+      header{
+        flex-direction:column;
+        align-items:center;
+        text-align:center;
+        gap:15px;
+      }
+
+      nav{
+        flex-direction:column;
+        align-items:center;
+        width:100%;
+      }
+
+      nav button{
+        width:100%;
+        max-width:280px;
+      }
+
+    }
+
+    /* FOOTER MATCH */
+    
+    @media(max-width:480px){
+      .footer-container{
+        flex-direction:column !important;
+        gap:30px !important;
+      }
+    }
+
+  </style>
 </head>
 
 <body>
 
+<!-- SAME HEADER STRUCTURE -->
 <header>
-  <img src="assets/logo.png" class="logo-large" />
+  <img src="assets/logo.png" class="logo" />
 
   <nav>
     <button onclick="window.location.href='index.html'">Home</button>
@@ -27,11 +96,10 @@
 
 <main class="center">
 
-  <div id="messageArea" class="message-area"></div>
+  <div id="messageArea" style="width:100%;max-width:420px;display:flex;justify-content:center;margin-bottom:25px;"></div>
 
   <div class="card profile-card">
-
-    <h2>Complete Your Profile</h2>
+    <h2 style="margin-bottom:20px;">Complete Your Profile</h2>
 
     <input id="name" placeholder="Full Name" class="input-field">
     <input id="phone" placeholder="Phone Number" class="input-field">
@@ -45,16 +113,24 @@
     <input id="city" placeholder="City" class="input-field">
     <input id="pincode" placeholder="Pincode" class="input-field">
 
-    <div id="formError" class="form-error"></div>
+<div id="formError" style="
+  margin-top:10px;
+  margin-bottom:10px;
+  color:#ffb3b3;
+  font-size:14px;
+  display:none;
+">
+</div>
 
-    <button class="primary-btn" id="saveProfileBtn">
+    
+    <button class="primary-btn" style="margin-top:20px;" onclick="saveProfile()">
       Save & Continue
     </button>
-
   </div>
 
 </main>
 
+<!-- SAME FOOTER AS OTHER PAGES -->
 <footer class="footer">
   <div class="footer-container">
 
@@ -77,12 +153,10 @@
         <i class="fa-solid fa-phone"></i>
         <a href="tel:+919910657711">+91-9910657711</a>
       </p>
-
-      <p>
-        <i class="fa-solid fa-phone"></i>
-        <a href="tel:+919911657711">+91-9911657711</a>
-      </p>
-
+    <p>
+<i class="fa-solid fa-phone"></i>
+<a href="tel:+919911657711">+91-9911657711</a>
+</p> 
       <p>
         <i class="fa-solid fa-envelope"></i>
         <a href="mailto:aquahillsbeverages@gmail.com">
@@ -94,12 +168,90 @@
   </div>
 
   <p class="footer-bottom">
-    © 2026 Aquahills Beverages | All Rights Reserved
+    © 2026 Aquahills Beverages | ISI & BIS Certified | All Rights Reserved
   </p>
 </footer>
 
+
 <script src="js/firebase.js"></script>
-<script src="js/profile.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("incomplete") === "true") {
+    document.getElementById("messageArea").innerHTML = `
+  <div class="card" style="width:100%;max-width:420px;text-align:center;">
+        <h3 style="margin-bottom:10px;">Almost There</h3>
+        <p style="opacity:0.8;">
+          Please complete your delivery details so we can process your order.
+        </p>
+      </div>
+    `;
+  }
+
+  firebase.auth().onAuthStateChanged(async (user) => {
+
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    const doc = await db.collection("users").doc(user.uid).get();
+    const data = doc.data();
+
+    if (!data) return;
+
+    if (data.name) document.getElementById("name").value = data.name;
+    if (data.phone) document.getElementById("phone").value = data.phone;
+
+    if (data.address) {
+      if (data.address.house) document.getElementById("house").value = data.address.house;
+      if (data.address.street) document.getElementById("street").value = data.address.street;
+      if (data.address.city) document.getElementById("city").value = data.address.city;
+      if (data.address.pincode) document.getElementById("pincode").value = data.address.pincode;
+    }
+
+  });
+
+});
+
+async function saveProfile() {
+
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+
+  if (!phone) {
+  const errorDiv = document.getElementById("formError");
+  errorDiv.innerText = "Phone number is required.";
+  errorDiv.style.display = "block";
+  return;
+}
+document.getElementById("formError").style.display = "none";
+
+  const updatedData = {
+    name: name,
+    phone: phone,
+    address: {
+      house: document.getElementById("house").value,
+      street: document.getElementById("street").value,
+      city: document.getElementById("city").value,
+      pincode: document.getElementById("pincode").value
+    }
+  };
+
+  await db.collection("users").doc(user.uid).set(updatedData, { merge:true });
+
+  window.location.href = "order.html";
+}
+
+</script>
 
 </body>
 </html>
