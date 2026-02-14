@@ -4,67 +4,246 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aquahills Beverages</title>
-
 <link rel="stylesheet" href="css/style.css">
 
+<!-- Font Awesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<style>
+.success-btn{
+padding:14px 35px;
+border-radius:35px;
+border:2px solid white;
+background:transparent;
+color:white;
+font-weight:600;
+font-size:16px;
+cursor:pointer;
+transition:.3s ease;
+min-width:200px;
+}
+
+.success-btn:hover{
+background:white;
+color:#0a5fd8;
+transform:scale(1.05);
+}
+
+/* Larger Logo */
+.logo{
+height:115px;
+}
+
+@media(max-width:768px){
+.logo{
+height:85px;
+}
+}
+
+/* Hero */
+.hero{
+padding:80px 20px 50px;
+text-align:center;
+}
+
+.hero h1{
+font-size:42px;
+max-width:850px;
+margin:auto;
+line-height:1.3;
+}
+
+@media(max-width:768px){
+.hero h1{
+font-size:26px;
+}
+}
+
+/* Certification Badges */
+.certifications{
+margin-top:20px;
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.cert-badge{
+background:rgba(255,255,255,.15);
+padding:14px 22px;
+border-radius:15px;
+font-weight:600;
+display:flex;
+align-items:center;
+gap:10px;
+backdrop-filter:blur(10px);
+}
+
+.cert-badge i{
+color:#00e1ff;
+}
+
+/* Footer */
+
+
+/* Social Icons */
+.social-icons{
+margin-top:15px;
+display:flex;
+justify-content:center;
+gap:18px;
+font-size:20px;
+}
+
+.social-icons i{
+cursor:pointer;
+transition:.3s;
+}
+
+.social-icons i:hover{
+color:#00e1ff;
+transform:scale(1.2);
+}
+
+.footer-bottom{
+margin-top:30px;
+text-align:center;
+opacity:.6;
+font-size:13px;
+}
+
+/* Extra Mobile Optimization */
+@media(max-width:480px){
+
+nav{
+flex-direction:column;
+gap:10px;
+}
+
+.hero{
+padding:60px 15px 40px;
+}
+
+.primary-btn{
+width:100%;
+max-width:280px;
+}
+
+.carousel{
+flex-direction:column;
+align-items:center;
+}
+
+.card{
+width:100%;
+max-width:340px;
+}
+
+.footer-container{
+flex-direction:column;
+gap:30px;
+}
+
+.certifications{
+flex-direction:column;
+align-items:center;
+}
+
+}
+/* === FORCE NAV BUTTONS MATCH MAIN BUTTON ON MOBILE === */
+@media(max-width:768px){
+  nav{
+    flex-direction:column !important;
+    align-items:center !important;
+    width:100% !important;
+  }
+
+  nav button{
+    width:100% !important;
+    max-width:280px !important;
+    padding:14px 35px !important;
+  }
+}
+/* ===== MOBILE HOME ABOVE LOGOUT ===== */
+@media(max-width:768px){
+
+nav{
+flex-direction:column !important;
+align-items:center !important;
+}
+
+#homeNavBtn{
+order:1;
+width:100%;
+max-width:280px;
+}
+
+#loginNavBtn{
+order:2;
+width:100%;
+max-width:280px;
+}
+
+}
+
+</style>
 </head>
 
 <body>
 
 <header>
-  <img src="assets/logo.png" class="logo-large"/>
+<img src="assets/logo.png" class="logo"/>
 
-  <nav>
-    <button id="ordersBtn">Orders</button>
-    <button id="homeNavBtn" style="display:none;">Home</button>
-    <button id="loginNavBtn">Login</button>
-  </nav>
+<nav>
+<button id="ordersBtn">Orders</button>
+<button id="homeNavBtn" style="display:none;">Home</button>
+<button id="loginNavBtn">Login</button>
+</nav>
 </header>
 
 <main id="mainContent">
 
 <section class="hero" id="heroSection">
-  <h1>Premium Drinking Water for Home & Business</h1>
+<h1>Premium Drinking Water for Home & Business</h1>
 
-  <div class="certifications">
-    <div class="cert-badge">
-      <i class="fa-solid fa-shield-check"></i> ISI Certified
-    </div>
-    <div class="cert-badge">
-      <i class="fa-solid fa-award"></i> BIS Certified
-    </div>
-    <div class="cert-badge">
-      <i class="fa-solid fa-flask"></i> Quality Tested
-    </div>
-  </div>
+<div class="certifications">
+<div class="cert-badge">
+<i class="fa-solid fa-shield-check"></i> ISI Certified
+</div>
+<div class="cert-badge">
+<i class="fa-solid fa-award"></i> BIS Certified
+</div>
+<div class="cert-badge">
+<i class="fa-solid fa-flask"></i> Quality Tested
+</div>
+</div>
 
-  <button id="mainActionBtn" class="primary-btn" style="margin-top:30px;">
-    Order Now
-  </button>
+<button id="mainActionBtn" class="primary-btn" style="margin-top:30px;">
+Order Now
+</button>
 </section>
 
 <section class="carousel-container">
-  <div class="carousel">
-    <div class="card">
-      <h2>Advanced RO + UV</h2>
-      <p>Multi stage purification ensures maximum safety and mineral balance.</p>
-    </div>
+<div class="carousel">
+<div class="card">
+<h2>Advanced RO + UV</h2>
+<p>Multi stage purification ensures maximum safety and mineral balance.</p>
+</div>
 
-    <div class="card">
-      <h2>Doorstep Delivery</h2>
-      <p>Reliable delivery service for homes, offices and businesses.</p>
-    </div>
+<div class="card">
+<h2>Doorstep Delivery</h2>
+<p>Reliable delivery service for homes, offices and businesses.</p>
+</div>
 
-    <div class="card">
-      <h2>Mineral Balanced</h2>
-      <p>Maintains essential minerals for safe and healthy hydration.</p>
-    </div>
-  </div>
+<div class="card">
+<h2>Mineral Balanced</h2>
+<p>Maintains essential minerals for safe and healthy hydration.</p>
+</div>
+</div>
 </section>
 
 </main>
@@ -91,12 +270,10 @@
         <i class="fa-solid fa-phone"></i>
         <a href="tel:+919910657711">+91-9910657711</a>
       </p>
-
-      <p>
-        <i class="fa-solid fa-phone"></i>
-        <a href="tel:+919911657711">+91-9911657711</a>
-      </p>
-
+    <p>
+<i class="fa-solid fa-phone"></i>
+<a href="tel:+919911657711">+91-9911657711</a>
+</p> 
       <p>
         <i class="fa-solid fa-envelope"></i>
         <a href="mailto:aquahillsbeverages@gmail.com">
@@ -108,12 +285,230 @@
   </div>
 
   <p class="footer-bottom">
-    © 2026 Aquahills Beverages | All Rights Reserved
+    © 2026 Aquahills Beverages | ISI & BIS Certified | All Rights Reserved
   </p>
 </footer>
 
+
 <script src="js/firebase.js"></script>
-<script src="js/index.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+
+const loginBtn=document.getElementById("loginNavBtn")
+const mainActionBtn=document.getElementById("mainActionBtn")
+const ordersBtn=document.getElementById("ordersBtn")
+const homeBtn = document.getElementById("homeNavBtn")
+
+firebase.auth().onAuthStateChanged(async user=>{
+homeBtn.style.display = "none"
+
+if(user){
+
+loginBtn.textContent="Logout"
+loginBtn.onclick=()=>firebase.auth().signOut().then(()=>location.reload())
+
+const userDoc=await db.collection("users").doc(user.uid).get()
+
+if(!userDoc.exists){
+console.error("User document missing")
+return
+}
+
+const data=userDoc.data()
+const role=data.role ? data.role.trim().toLowerCase() : "customer"
+
+if(role==="admin"){
+mainActionBtn.textContent="Admin Controls"
+mainActionBtn.onclick=()=>location.href="admin.html"
+ordersBtn.style.display="none"
+ordersBtn.onclick=()=>loadActiveOrders()
+}
+else if(role==="delivery"){
+mainActionBtn.textContent="Assigned Orders"
+mainActionBtn.onclick=()=>loadAssignedOrders(user.uid)
+ordersBtn.style.display="none"
+ordersBtn.onclick=()=>loadAssignedOrders(user.uid)
+
+}
+else{
+mainActionBtn.textContent="Order Now"
+mainActionBtn.onclick=()=>location.href="order.html"
+ordersBtn.onclick=()=>location.href="orders.html"
+}
+
+}
+else{
+loginBtn.textContent="Login"
+loginBtn.onclick=()=>location.href="login.html"
+
+mainActionBtn.textContent="Order Now"
+mainActionBtn.onclick=()=>location.href="order.html"
+
+ordersBtn.onclick=()=>location.href="orders.html"
+}
+
+})
+
+})
+
+async function loadActiveOrders(){
+const snap=await db.collection("orders")
+.where("status","!=","Delivered")
+.get()
+
+let rows=""
+
+for(const doc of snap.docs){
+const o=doc.data()
+const uDoc=await db.collection("users").doc(o.customerId).get()
+const u=uDoc.data()||{}
+
+rows+=`
+<tr>
+<td>${u.name||""}</td>
+<td>${u.phone||""}</td>
+<td>${o.bottles}</td>
+<td>₹${o.total}</td>
+<td>
+<button class="success-btn" onclick="markDelivered('${doc.id}')">
+Mark Delivered
+</button>
+</td>
+</tr>`
+}
+
+renderTable("Active Orders",rows)
+}
+
+async function loadAssignedOrders(uid){
+
+if(!uid) return;
+
+const homeBtn = document.getElementById("homeNavBtn");
+homeBtn.style.display = "inline-block";
+homeBtn.onclick = () => location.reload();
+
+document.getElementById("heroSection").style.display="none"
+document.querySelector(".carousel-container").style.display="none"
+
+try{
+
+// ✅ ONLY query allowed documents
+const snap = await db.collection("orders")
+.where("assignedTo","==",uid)
+.get()
+
+let rows=""
+
+for(const doc of snap.docs){
+
+const o = doc.data()
+
+// Skip delivered in frontend
+if(o.status === "Delivered") continue;
+
+const userDoc = await db.collection("users").doc(o.customerId).get()
+const u = userDoc.data() || {}
+const addr = u.address || {}
+
+const fullAddress = `
+${addr.house||""},
+${addr.street||""},
+${addr.city||""} - ${addr.pincode||""}
+`
+
+rows+=`
+<tr>
+<td>${u.name||""}</td>
+<td>${u.phone||""}</td>
+<td>${o.bottles}</td>
+<td>${fullAddress}</td>
+<td>
+<button class="success-btn" onclick="markDelivered('${doc.id}')">
+Mark Delivered
+</button>
+</td>
+</tr>`
+}
+
+document.getElementById("mainContent").innerHTML = `
+<div style="width:100%;padding:40px 20px;display:flex;justify-content:center;">
+<div style="width:100%;max-width:1100px;">
+<div style="
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(15px);
+padding:30px;
+border-radius:20px;
+width:100%;
+box-shadow:0 10px 35px rgba(0,0,0,0.3);
+text-align:center;
+">
+<h2 style="margin-bottom:25px;">Assigned Orders</h2>
+<div style="width:100%;overflow-x:auto;">
+<table style="width:100%;border-collapse:collapse;text-align:center;min-width:800px;">
+<tr style="border-bottom:1px solid rgba(255,255,255,0.3);">
+<th style="padding:14px;">Name</th>
+<th style="padding:14px;">Phone</th>
+<th style="padding:14px;">Bottles</th>
+<th style="padding:14px;">Address</th>
+<th style="padding:14px;">Action</th>
+</tr>
+${rows||"<tr><td colspan='5' style='padding:20px;'>No Orders Assigned</td></tr>"}
+</table>
+</div>
+</div>
+</div>
+</div>
+`
+
+}catch(error){
+
+console.error("Assigned orders error:", error);
+
+document.getElementById("mainContent").innerHTML = `
+<div style="display:flex;justify-content:center;padding:40px;">
+<div style="
+background:rgba(255,255,255,0.15);
+padding:30px;
+border-radius:20px;
+text-align:center;
+max-width:500px;
+width:100%;">
+<h2>No Assigned Orders</h2>
+<p style="opacity:0.8;margin-top:10px;">You currently have no active deliveries.</p>
+</div>
+</div>`
+}
+
+}
+
+function renderTable(title,rows){
+document.getElementById("homeNavBtn").style.display = "none";
+document.getElementById("heroSection").style.display="none"
+document.querySelector(".carousel-container").style.display="none"
+
+document.getElementById("mainContent").innerHTML=`
+<div class="dashboard-card">
+<h2 style="margin-bottom:20px;text-align:center;">${title}</h2>
+<table>
+<tr>
+<th>Name</th>
+<th>Phone</th>
+<th>Bottles</th>
+<th>Total</th>
+<th>Action</th>
+</tr>
+${rows||"<tr><td colspan='5'>No Orders</td></tr>"}
+</table>
+</div>`
+}
+
+async function markDelivered(id){
+await db.collection("orders").doc(id).update({status:"Delivered"})
+location.reload()
+}
+</script>
 
 </body>
 </html>
