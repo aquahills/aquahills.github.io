@@ -421,12 +421,19 @@ ${addr.street||""},
 ${addr.city||""} - ${addr.pincode||""}
 `
 
+const clickableAddress = addr.mapLink
+  ? `<a href="${addr.mapLink}" target="_blank" style="color:#00e1ff;text-decoration:underline;">
+       ${fullAddress}
+     </a>`
+  : fullAddress
+
 rows+=`
 <tr>
 <td>${u.name||""}</td>
 <td>${u.phone||""}</td>
 <td>${o.bottles}</td>
-<td>${fullAddress}</td>
+<td>${clickableAddress}</td>
+
 <td>
 <button class="success-btn" onclick="markDelivered('${doc.id}')">
 Mark Delivered
