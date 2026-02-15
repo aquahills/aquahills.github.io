@@ -508,8 +508,29 @@ ${rows||"<tr><td colspan='5'>No Orders</td></tr>"}
 }
 
 async function markDelivered(id){
-await db.collection("orders").doc(id).update({status:"Delivered"})
-location.reload()
+  // 1. Update the status to 'Delivered' in the database
+  await db.collection("orders").doc(id).update({status:"Delivered"});
+
+  // 2. Identify the current user
+  const user = firebase.auth().currentUser;
+
+  if (user) {
+    // 3. Fetch the user's role to know which list to refresh
+    const userDoc = await db.collection("users").doc(user.uid).get();
+    const role = userDoc.data()?.role?.trim().toLowerCase();
+
+    if (role === "delivery") {
+      // Re-run the list function for Delivery agents
+      loadAssignedOrders(user.uid); 
+    } else if (role === "admin") {
+      // Re-run the list function for Admins
+      loadActiveOrders();
+    } else {
+      location.reload();
+    }
+  } else {
+    location.reload();
+  }
 }
 </script>
 <script>
