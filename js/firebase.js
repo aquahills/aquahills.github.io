@@ -77,3 +77,23 @@ if ("serviceWorker" in navigator) {
   })
   .catch(err => console.log("SW error", err));
 }
+/* =================================================
+   GLOBAL DYNAMIC FOOTER YEAR (IST BASED)
+   ================================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  const istYear = new Date().toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    year: "numeric"
+  });
+
+  const footer = document.querySelector(".footer-bottom");
+
+  if (footer) {
+    footer.innerHTML = `
+      © ${istYear} Aquahills Beverages | All Rights Reserved
+    `;
+  }
+
+});
