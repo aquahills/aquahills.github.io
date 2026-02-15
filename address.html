@@ -116,26 +116,6 @@
     <input id="city" placeholder="City" class="input-field">
     <input id="pincode" placeholder="Pincode" class="input-field">
 
-    <!-- GOOGLE MAP PINPOINT BUTTON -->
-<button type="button"
-        class="primary-btn"
-        style="margin-top:10px;background:#00b4ff;color:white;"
-        onclick="detectAndSaveLocation()">
-  <i class="fa-solid fa-location-dot"></i>
-  Pinpoint Your Location
-</button>
-
-<input type="hidden" id="mapLink">
-
-<div id="locationStatus" style="
-  margin-top:10px;
-  font-size:14px;
-  opacity:0.9;
-  display:none;
-">
-</div>
-
-
 <div id="formError" style="
   margin-top:10px;
   margin-bottom:10px;
@@ -239,42 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-function detectAndSaveLocation() {
-
-  const statusDiv = document.getElementById("locationStatus");
-  statusDiv.style.display = "block";
-  statusDiv.innerText = "Detecting your location...";
-
-  if (!navigator.geolocation) {
-    statusDiv.innerText = "Geolocation is not supported on this device.";
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-
-    (position) => {
-
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-
-      const mapUrl = `https://www.google.com/maps?q=${lat},${lng}`;
-
-      // Save automatically in hidden field
-      document.getElementById("mapLink").value = mapUrl;
-
-      statusDiv.innerText = "Location saved successfully ✔";
-
-    },
-
-    () => {
-      statusDiv.innerText = "Unable to detect location. Please allow location permission.";
-    }
-
-  );
-}
-
-  
-async function saveProfile() {async function saveProfile() {
+async function saveProfile() {
 
   const user = firebase.auth().currentUser;
   if (!user) {
@@ -285,46 +230,29 @@ async function saveProfile() {async function saveProfile() {
   const name = document.getElementById("name").value.trim();
   const phone = document.getElementById("phone").value.trim();
 
-  const house = document.getElementById("house").value.trim();
-  const street = document.getElementById("street").value.trim();
-  const city = document.getElementById("city").value.trim();
-  const pincode = document.getElementById("pincode").value.trim();
-  const mapLink = document.getElementById("mapLink").value;
-
   if (!phone) {
-    const errorDiv = document.getElementById("formError");
-    errorDiv.innerText = "Phone number is required.";
-    errorDiv.style.display = "block";
-    return;
-  }
-
-  // Validation: either address OR mapLink required
-  if (!mapLink && (!house || !city || !pincode)) {
-    const errorDiv = document.getElementById("formError");
-    errorDiv.innerText = "Provide address details OR pinpoint your location.";
-    errorDiv.style.display = "block";
-    return;
-  }
-
-  document.getElementById("formError").style.display = "none";
+  const errorDiv = document.getElementById("formError");
+  errorDiv.innerText = "Phone number is required.";
+  errorDiv.style.display = "block";
+  return;
+}
+document.getElementById("formError").style.display = "none";
 
   const updatedData = {
     name: name,
     phone: phone,
     address: {
-      house: house,
-      street: street,
-      city: city,
-      pincode: pincode,
-      mapLink: mapLink || ""
+      house: document.getElementById("house").value,
+      street: document.getElementById("street").value,
+      city: document.getElementById("city").value,
+      pincode: document.getElementById("pincode").value
     }
   };
 
-  await db.collection("users").doc(user.uid).set(updatedData, { merge: true });
+  await db.collection("users").doc(user.uid).set(updatedData, { merge:true });
 
   window.location.href = "order.html";
 }
-
 
 </script>
 
