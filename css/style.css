@@ -12,7 +12,7 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: "Segoe UI", sans-serif;
-  background: linear-gradient(180deg, #062c5c 0%, #0a5fd8 60%, #00b4ff 100%);
+  background: linear-gradient(180deg, #2872a1 0%, #79a7c5 60%, #cbdde9 100%);
   color: white;
   min-height: 100vh;
 }
