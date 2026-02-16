@@ -1,10 +1,7 @@
 :root {
   --primary: #0a5fd8;
-  --deep: #021b3c;
-  --accent: #00d2ff; /* brighter cyan for water pop */
-  --glass: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.2);
-  --text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  --deep: #062c5c;
+  --accent: #00b4ff;
 }
 
 * {
@@ -15,9 +12,7 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: "Segoe UI", sans-serif;
-  /* Complex gradient for a deep underwater feel */
-  background: radial-gradient(circle at 50% 0%, #0e4b94 0%, #021b3c 60%, #000c1f 100%);
-  background-attachment: fixed; /* Parallax effect */
+  background: linear-gradient(180deg, #062c5c 0%, #0a5fd8 60%, #00b4ff 100%);
   color: white;
   min-height: 100vh;
 }
@@ -113,22 +108,17 @@ nav button:hover {
 }
 
 .card {
-  background: var(--glass); /* Translucent */
-  backdrop-filter: blur(12px); /* The "Ice" effect */
-  -webkit-backdrop-filter: blur(12px);
-  padding: 30px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(15px);
+  padding: 25px;
   border-radius: 20px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--glass-border);
-  text-align: center;
-  max-width: 90%;
-  margin: 20px auto;
-  transition: transform 0.3s ease;
+  width: 280px;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.3);
+  transition: 0.3s ease;
 }
 
 .card:hover {
-  transform: translateY(-5px); /* Float up slightly */
-  box-shadow: 0 12px 40px 0 rgba(0, 210, 255, 0.15); /* Blue glow */
+  transform: translateY(-10px);
 }
 
 .card h2 {
