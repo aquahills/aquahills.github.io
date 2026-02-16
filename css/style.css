@@ -1,7 +1,10 @@
 :root {
-  --primary: #0a5fd8;
-  --deep: #062c5c;
-  --accent: #00b4ff;
+  --primary: #00c6ff;
+  --deep: #0072ff;
+  --accent: #ffffff;
+  --glass: rgba(255, 255, 255, 0.15);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --text-dark: #062c5c;
 }
 
 * {
@@ -12,9 +15,32 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: "Segoe UI", sans-serif;
-  background: linear-gradient(180deg, #062c5c 0%, #0a5fd8 60%, #00b4ff 100%);
+  /* Fresh, thirst-inducing gradient */
+  background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
   color: white;
   min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Bubbles Animation Background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-image: 
+    radial-gradient(rgba(255,255,255,0.2) 1px, transparent 1px),
+    radial-gradient(rgba(255,255,255,0.15) 2px, transparent 2px);
+  background-size: 20px 20px, 40px 40px;
+  background-position: 0 0, 20px 20px;
+  animation: bubbles 10s linear infinite;
+  z-index: -1;
+  pointer-events: none;
+}
+
+@keyframes bubbles {
+  0% { background-position: 0 100%, 20px 100%; }
+  100% { background-position: 0 0, 20px 0; }
 }
 
 /* ===== LAYOUT STRUCTURE ===== */
@@ -309,4 +335,61 @@ nav button:hover {
     flex-direction: column;
     text-align: center;
   }
+}
+
+/* ===== ULTRA PREMIUM UI UPGRADE ===== */
+
+/* Glassmorphism Cards */
+.card, .login-card, .profile-card, .order-card, .orders-card {
+  background: var(--glass) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15) !important;
+  border-radius: 20px !important;
+  color: white !important;
+}
+
+/* Better Headings */
+h1, h2, h3 {
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  letter-spacing: 0.5px;
+}
+
+/* Modern Inputs */
+input, select {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: none !important;
+  padding: 15px 20px !important;
+  border-radius: 12px !important;
+  color: #333 !important;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+  font-size: 16px !important;
+}
+
+/* Glowing Buttons */
+button.primary-btn, .success-btn {
+  background: white !important;
+  color: var(--deep) !important;
+  font-weight: 800 !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+  transition: transform 0.2s, box-shadow 0.2s !important;
+}
+
+button.primary-btn:hover, .success-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Logo Image Styling */
+.hero-img-container img {
+  border-radius: 50%; /* Make sticker circular */
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+  border: 5px solid rgba(255,255,255,0.2);
+  transition: transform 0.3s ease;
+}
+
+.hero-img-container img:hover {
+  transform: scale(1.05) rotate(5deg);
 }
