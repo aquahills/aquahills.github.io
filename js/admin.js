@@ -86,16 +86,25 @@ const orders=await db.collection("orders").get()
 const users=await db.collection("users").get()
 const active=orders.docs.filter(d=>d.data().status!=="Delivered")
 
+const delivered=orders.docs.filter(d=>d.data().status==="Delivered").length
+
 contentArea.innerHTML=`
 <div class="admin-card">
 <div class="dashboard-grid">
 <div class="stat" onclick="navigate('users')">
-<h2>👥 ${users.size}</h2>
+<div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+<h2>${users.size}</h2>
 <p>All Users</p>
 </div>
 <div class="stat" onclick="navigate('activeOrders')">
-<h2>📦 ${active.length}</h2>
+<div class="stat-icon"><i class="fa-solid fa-truck-fast"></i></div>
+<h2>${active.length}</h2>
 <p>Active Orders</p>
+</div>
+<div class="stat" onclick="navigate('ordersSummary')">
+<div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+<h2>${delivered}</h2>
+<p>Delivered Orders</p>
 </div>
 </div>
 </div>`
