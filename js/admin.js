@@ -1,5 +1,9 @@
+document.getElementById("price").value = getPrice();
 let deleteUserId=null
 
+function updatePrice() {
+  localStorage.setItem("price", document.getElementById("price").value);
+  alert("Price updated");
 function toggleSidebar(){sidebar.classList.toggle("active");overlay.classList.toggle("active")}
 function closeSidebar(){sidebar.classList.remove("active");overlay.classList.remove("active")}
 function navigate(s){closeSidebar();showSection(s)}
@@ -86,25 +90,16 @@ const orders=await db.collection("orders").get()
 const users=await db.collection("users").get()
 const active=orders.docs.filter(d=>d.data().status!=="Delivered")
 
-const delivered=orders.docs.filter(d=>d.data().status==="Delivered").length
-
 contentArea.innerHTML=`
 <div class="admin-card">
 <div class="dashboard-grid">
 <div class="stat" onclick="navigate('users')">
-<div class="stat-icon"><i class="fa-solid fa-users"></i></div>
-<h2>${users.size}</h2>
+<h2>👥 ${users.size}</h2>
 <p>All Users</p>
 </div>
 <div class="stat" onclick="navigate('activeOrders')">
-<div class="stat-icon"><i class="fa-solid fa-truck-fast"></i></div>
-<h2>${active.length}</h2>
+<h2>📦 ${active.length}</h2>
 <p>Active Orders</p>
-</div>
-<div class="stat" onclick="navigate('ordersSummary')">
-<div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
-<h2>${delivered}</h2>
-<p>Delivered Orders</p>
 </div>
 </div>
 </div>`
