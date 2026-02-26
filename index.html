@@ -20,8 +20,8 @@
 
 <body>
 
-<header>
-<img src="assets/logo.png" class="logo"/>
+<header class="site-header">
+<img src="assets/logo.png" class="logo" alt="Aquahills logo"/>
 
 <nav>
 <button id="ordersBtn">Orders</button>
@@ -34,6 +34,7 @@
 
 <section class="hero" id="heroSection">
 <h1>Premium Drinking Water for Home & Business</h1>
+<p class="hero-subtitle">Safe hydration with a refined customer experience for homes and offices.</p>
 
 <div class="certifications">
 <div class="cert-badge">
@@ -50,25 +51,45 @@
 <button id="mainActionBtn" class="primary-btn" style="margin-top:30px;">
 Order Now
 </button>
+<button id="installAppBtn" class="primary-btn install-app-btn" type="button" style="display:none;">
+Install App
+</button>
 </section>
 
-<section class="carousel-container">
-<div class="carousel">
-<div class="card">
-<h2>Advanced RO + UV</h2>
-<p>Multi stage purification ensures maximum safety and mineral balance.</p>
-</div>
+<section class="premium-showcase">
+  <div class="showcase-content">
+    <div class="showcase-copy">
+      <span class="eyebrow">A Sign of Purity</span>
+      <h2>Trusted Delivery With Premium Presentation</h2>
+      <p>Integrated brand visuals in a controlled layout with smooth motion and strong mobile readability.</p>
+      <div class="showcase-points">
+        <span><i class="fa-solid fa-droplet"></i> RO + UV</span>
+        <span><i class="fa-solid fa-truck-fast"></i> Home Delivery</span>
+      </div>
+    </div>
+    <div class="showcase-media">
+      <img src="assets/20l-bottle.png" alt="Aquahills water bottle" class="showcase-bottle">
+    </div>
+  </div>
+</section>
 
-<div class="card">
-<h2>Doorstep Delivery</h2>
-<p>Reliable delivery service for homes, offices and businesses.</p>
-</div>
-
-<div class="card">
-<h2>Mineral Balanced</h2>
-<p>Maintains essential minerals for safe and healthy hydration.</p>
-</div>
-</div>
+<section class="premium-carousel-wrap">
+  <div class="premium-carousel-shell">
+    <div class="premium-carousel" id="premiumCarousel">
+      <article class="premium-card" data-state="active">
+        <h2>Advanced RO + UV</h2>
+        <p>Multi stage purification for consistent safety and balanced taste quality.</p>
+      </article>
+      <article class="premium-card" data-state="right">
+        <h2>Doorstep Delivery</h2>
+        <p>Reliable and timely service for homes, offices, and institutional clients.</p>
+      </article>
+      <article class="premium-card" data-state="left">
+        <h2>Premium Support</h2>
+        <p>Professional service standards with smooth ordering and order follow up.</p>
+      </article>
+    </div>
+  </div>
 </section>
 
 </main>
@@ -119,6 +140,29 @@ Order Now
 
 <script>
 document.addEventListener("DOMContentLoaded",()=>{
+
+
+const premiumCarousel = document.getElementById("premiumCarousel")
+if(premiumCarousel){
+const cards=[...premiumCarousel.querySelectorAll('.premium-card')]
+let current=0
+const states=['active','right','left']
+
+function paint(){
+  cards.forEach((card,idx)=>{
+    const rel=(idx-current+cards.length)%cards.length
+    card.dataset.state=states[rel]||'hidden'
+  })
+}
+
+function go(n){
+  current=(n+cards.length)%cards.length
+  paint()
+}
+
+paint()
+setInterval(()=>go(current+1),4200)
+}
 
 const loginBtn=document.getElementById("loginNavBtn")
 const mainActionBtn=document.getElementById("mainActionBtn")
@@ -214,8 +258,13 @@ const homeBtn = document.getElementById("homeNavBtn");
 homeBtn.style.display = "inline-block";
 homeBtn.onclick = () => location.reload();
 
-document.getElementById("heroSection").style.display="none"
-document.querySelector(".carousel-container").style.display="none"
+const heroSection = document.getElementById("heroSection")
+const premiumShowcase = document.querySelector(".premium-showcase")
+const premiumCarouselWrap = document.querySelector(".premium-carousel-wrap")
+
+if(heroSection) heroSection.style.display="none"
+if(premiumShowcase) premiumShowcase.style.display="none"
+if(premiumCarouselWrap) premiumCarouselWrap.style.display="none"
 
 try{
 
@@ -310,8 +359,13 @@ width:100%;">
 
 function renderTable(title,rows){
 document.getElementById("homeNavBtn").style.display = "none";
-document.getElementById("heroSection").style.display="none"
-document.querySelector(".carousel-container").style.display="none"
+const heroSection = document.getElementById("heroSection")
+const premiumShowcase = document.querySelector(".premium-showcase")
+const premiumCarouselWrap = document.querySelector(".premium-carousel-wrap")
+
+if(heroSection) heroSection.style.display="none"
+if(premiumShowcase) premiumShowcase.style.display="none"
+if(premiumCarouselWrap) premiumCarouselWrap.style.display="none"
 
 document.getElementById("mainContent").innerHTML=`
 <div class="dashboard-card">
@@ -351,26 +405,39 @@ async function markDelivered(id) {
 </script>
 <script>
 let deferredPrompt;
+const installBtn = document.getElementById("installAppBtn");
+
+function isStandalone() {
+  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+}
+
+if (installBtn && !isStandalone()) {
+  installBtn.style.display = "inline-block";
+}
 
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredPrompt = e;
-
-  const installBtn = document.createElement("button");
-  installBtn.innerText = "Install App";
-  installBtn.className = "primary-btn";
-  installBtn.style.marginTop = "20px";
-
-  document.querySelector(".hero").appendChild(installBtn);
-
-  installBtn.addEventListener("click", async () => {
-    installBtn.style.display = "none";
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
-  });
+  if (installBtn) installBtn.style.display = "inline-block";
 });
-  
+
+if (installBtn) {
+  installBtn.addEventListener("click", async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      return;
+    }
+
+    alert("Install is available from your browser menu. On Android Chrome: tap menu ⋮ > Install app. On iPhone Safari: Share > Add to Home Screen.");
+  });
+}
+
+window.addEventListener("appinstalled", () => {
+  if (installBtn) installBtn.style.display = "none";
+  deferredPrompt = null;
+});
 </script>
 <script>
 if ("serviceWorker" in navigator) {
