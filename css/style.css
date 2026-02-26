@@ -1,3 +1,312 @@
+:root {
+--primary: #0a5fd8;
+--deep: #062c5c;
+--accent: #00b4ff;
+}
+
+* {
+box-sizing: border-box;
+}
+
+html, body {
+margin: 0;
+padding: 0;
+font-family: "Segoe UI", sans-serif;
+background: linear-gradient(180deg, #062c5c 0%, #0a5fd8 60%, #00b4ff 100%);
+color: white;
+min-height: 100vh;
+}
+
+/* ===== LAYOUT STRUCTURE ===== */
+
+body {
+display: flex;
+flex-direction: column;
+}
+
+main {
+flex: 1;
+}
+
+/* ===== HEADER ===== */
+
+header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 20px 40px;
+}
+
+.logo {
+height: 80px;
+}
+
+nav {
+display: flex;
+gap: 12px;
+}
+
+nav button {
+padding: 14px 35px;
+border-radius: 35px;
+border: 2px solid white;
+background: transparent;
+color: white;
+cursor: pointer;
+font-weight: 600;
+font-size: 16px;
+transition: 0.3s ease;
+min-width: 200px;
+}
+
+nav button:hover {
+background: white;
+color: var(--primary);
+transform: scale(1.05);
+}
+
+
+/* ===== HERO ===== */
+
+.hero {
+text-align: center;
+padding: 60px 20px 40px;
+}
+
+.hero h1 {
+font-size: 36px;
+margin-bottom: 25px;
+}
+
+.primary-btn {
+padding: 14px 35px;
+border-radius: 35px;
+border: none;
+background: white;
+color: var(--primary);
+font-weight: bold;
+cursor: pointer;
+font-size: 16px;
+transition: 0.3s ease;
+}
+
+.primary-btn:hover {
+transform: scale(1.05);
+}
+
+/* ===== CAROUSEL ===== */
+
+.carousel-container {
+padding: 40px 20px 80px;
+display: flex;
+justify-content: center;
+}
+
+.carousel {
+display: flex;
+gap: 30px;
+}
+
+.card {
+background: rgba(255,255,255,0.15);
+backdrop-filter: blur(15px);
+padding: 25px;
+border-radius: 20px;
+width: 280px;
+box-shadow: 0 10px 35px rgba(0,0,0,0.3);
+transition: 0.3s ease;
+}
+
+.card:hover {
+transform: translateY(-10px);
+}
+
+.card h2 {
+margin-top: 0;
+font-size: 18px;
+}
+
+.card p {
+font-size: 14px;
+line-height: 1.5;
+}
+
+/* ===== FOOTER ===== */
+
+/* ===== PROFESSIONAL FOOTER FINAL FIX ===== */
+
+.footer{
+background: rgba(0,0,0,0.55);
+padding: 75px 20px 45px;   /* more breathing room */
+text-align: center;
+}
+
+.footer-container{
+display: flex;
+justify-content: center;
+align-items: flex-start;
+gap: 100px;                 /* wider spacing between columns */
+flex-wrap: wrap;
+max-width: 1100px;
+margin: auto;
+margin-bottom: 50px;        /* space before copyright */
+}
+
+.footer-brand,
+.footer-contact{
+min-width: 260px;
+}
+
+/* ✅ SAME SIZE HEADINGS */
+.footer h3,
+.footer h4{
+font-size: 18px;            /* identical size */
+font-weight: 600;
+margin-bottom: 18px;
+letter-spacing: 0.5px;
+}
+
+/* Tagline */
+.footer .tagline{
+font-size: 14px;
+opacity: 0.8;
+margin-bottom: 20px;
+}
+
+/* Text */
+.footer p{
+font-size: 14px;
+margin: 8px 0;
+opacity: 0.85;
+}
+
+/* Links */
+.footer a{
+color: white;
+text-decoration: none;
+margin-left: 6px;
+font-weight: 500;
+}
+
+.footer a:hover{
+text-decoration: underline;
+}
+
+/* Social */
+.social-icons{
+margin-top: 20px;
+display: flex;
+justify-content: center;
+gap: 20px;
+font-size: 18px;
+}
+
+.social-icons i{
+cursor: pointer;
+transition: 0.3s ease;
+}
+
+.social-icons i:hover{
+color: #00e1ff;
+transform: scale(1.15);
+}
+
+/* ✅ CLEAR COPYRIGHT SEPARATION */
+.footer-bottom{
+padding-top: 30px;
+margin-top: 50px;
+border-top: 1px solid rgba(255,255,255,0.15);
+font-size: 13px;
+opacity: 0.6;
+}
+
+/* ===== MOBILE FIX ===== */
+
+@media(max-width:768px){
+
+.footer-container{
+flex-direction: column;
+align-items: center;
+gap: 35px;      /* tighter spacing */
+}
+
+.footer-brand,
+.footer-contact{
+min-width: unset;   /* REMOVE forced width */
+width: 100%;
+max-width: 400px;   /* keep it neat */
+}
+
+.footer{
+padding: 55px 15px 30px;
+}
+
+.footer-bottom{
+margin-top: 35px;
+padding-top: 20px;
+}
+}
+
+
+
+
+/* ===== LOGIN PAGE CENTERING ===== */
+
+.center {
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+flex: 1;
+text-align: center;
+padding: 20px;
+}
+
+.center button {
+padding: 12px 30px;
+border-radius: 30px;
+border: none;
+background: white;
+color: var(--primary);
+font-weight: bold;
+cursor: pointer;
+}
+
+/* ===== RESPONSIVE FIX ===== */
+
+@media (max-width: 768px) {
+
+header {
+flex-direction: column;
+gap: 15px;
+}
+
+.logo {
+height: 70px;
+}
+
+nav {
+flex-wrap: wrap;
+justify-content: center;
+}
+
+.hero h1 {
+font-size: 24px;
+}
+
+/* IMPORTANT: Carousel vertical on mobile */
+.carousel {
+flex-direction: column;
+align-items: center;
+}
+
+.card {
+width: 100%;
+max-width: 350px;
+}
+
+.footer-container {
+flex-direction: column;
 text-align: center;
 }
 }
@@ -187,7 +496,7 @@ max-width:280px;
 /* =====================================================
   ================= ADMIN PANEL STYLES ================
   ===================================================== */
-@@ -667,188 +850,3 @@ grid-template-columns:1fr !important;
+@@ -667,188 +850,3 @@
 width:100% !important;
 }
 }
