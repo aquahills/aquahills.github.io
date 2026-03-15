@@ -6,7 +6,6 @@
 <title>Aquahills Beverages</title>
 <link rel="stylesheet" href="css/style.css">
 
-<!-- Font Awesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -16,12 +15,9 @@
 <meta name="theme-color" content="#0a5fd8">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 
-
-
 </head>
 
 <body class="index-page">
-<body>
 
 <header>
 <img src="assets/logo.png" class="logo"/>
@@ -46,3 +42,279 @@
 <i class="fa-solid fa-award"></i> BIS Certified
 </div>
 <div class="cert-badge">
+<i class="fa-solid fa-flask"></i> Quality Tested
+</div>
+</div>
+
+<button id="mainActionBtn" class="primary-btn" style="margin-top:30px;">
+Order Now
+</button>
+</section>
+
+<section class="carousel-container">
+<div class="carousel">
+<div class="card">
+<h2>Advanced RO + UV</h2>
+<p>Multi stage purification ensures maximum safety and mineral balance.</p>
+</div>
+
+<div class="card">
+<h2>Doorstep Delivery</h2>
+<p>Reliable delivery service for homes, offices and businesses.</p>
+</div>
+
+<div class="card">
+<h2>Mineral Balanced</h2>
+<p>Maintains essential minerals for safe and healthy hydration.</p>
+</div>
+</div>
+</section>
+
+</main>
+
+<footer class="footer">
+<div class="footer-container">
+
+<div class="footer-brand">
+<h3>Aquahills Beverages</h3>
+<p class="tagline">Pure & Safe Drinking Water</p>
+
+<div class="social-icons">
+<i class="fab fa-facebook-f"></i>
+<i class="fab fa-instagram"></i>
+<i class="fab fa-youtube"></i>
+<i class="fab fa-linkedin-in"></i>
+</div>
+</div>
+
+<div class="footer-contact">
+<h4>Contact Us</h4>
+
+<p>
+<i class="fa-solid fa-phone"></i>
+<a href="tel:+919910657711">+91-9910657711</a>
+</p>
+<p>
+<i class="fa-solid fa-phone"></i>
+<a href="tel:+919911657711">+91-9911657711</a>
+</p> 
+<p>
+<i class="fa-solid fa-envelope"></i>
+<a href="mailto:aquahillsbeverages@gmail.com">
+support@aquahills.com
+</a>
+</p>
+</div>
+
+</div>
+
+<p class="footer-bottom">
+© 2026 Aquahills Beverages | All Rights Reserved
+</p>
+</footer>
+
+<script src="js/firebase.js"></script>
+
+<script>
+// --- PAGE LOGIC ---
+document.addEventListener("DOMContentLoaded",()=>{
+    const loginBtn=document.getElementById("loginNavBtn")
+    const mainActionBtn=document.getElementById("mainActionBtn")
+    const ordersBtn=document.getElementById("ordersBtn")
+    const homeBtn = document.getElementById("homeNavBtn")
+
+    firebase.auth().onAuthStateChanged(async user=>{
+        homeBtn.style.display = "none"
+
+        if(user){
+            loginBtn.textContent="Logout"
+            loginBtn.onclick=()=>firebase.auth().signOut().then(()=>location.reload())
+
+            const userDoc=await db.collection("users").doc(user.uid).get()
+
+            if(!userDoc.exists){
+                console.error("User document missing")
+                return
+            }
+
+            const data=userDoc.data()
+            const role=data.role ? data.role.trim().toLowerCase() : "customer"
+
+            if(role==="admin"){
+                mainActionBtn.textContent="Admin Controls"
+                mainActionBtn.onclick=()=>location.href="admin.html"
+                ordersBtn.style.display="none"
+                ordersBtn.onclick=()=>loadActiveOrders()
+            }
+            else if(role==="delivery"){
+                mainActionBtn.textContent="Assigned Orders"
+                mainActionBtn.onclick=()=>loadAssignedOrders(user.uid)
+                ordersBtn.style.display="none"
+                ordersBtn.onclick=()=>loadAssignedOrders(user.uid)
+            }
+            else{
+                mainActionBtn.textContent="Order Now"
+                mainActionBtn.onclick=()=>location.href="order.html"
+                ordersBtn.onclick=()=>location.href="orders.html"
+            }
+        }
+        else{
+            loginBtn.textContent="Login"
+            loginBtn.onclick=()=>location.href="login.html"
+            mainActionBtn.textContent="Order Now"
+            mainActionBtn.onclick=()=>location.href="order.html"
+            ordersBtn.onclick=()=>location.href="orders.html"
+        }
+    })
+})
+
+async function loadActiveOrders(){
+    const snap=await db.collection("orders").where("status","!=","Delivered").get()
+    let rows=""
+    for(const doc of snap.docs){
+        const o=doc.data()
+        const uDoc=await db.collection("users").doc(o.customerId).get()
+        const u=uDoc.data()||{}
+        rows+=`
+        <tr>
+        <td>${u.name||""}</td>
+        <td>${u.phone||""}</td>
+        <td>${o.bottles}</td>
+        <td>₹${o.total}</td>
+        <td>
+        <button class="success-btn" onclick="markDelivered('${doc.id}')">Mark Delivered</button>
+        </td>
+        </tr>`
+    }
+    renderTable("Active Orders",rows)
+}
+
+async function loadAssignedOrders(uid){
+    if(!uid) return;
+    const homeBtn = document.getElementById("homeNavBtn");
+    homeBtn.style.display = "inline-block";
+    homeBtn.onclick = () => location.reload();
+    document.getElementById("heroSection").style.display="none"
+    document.querySelector(".carousel-container").style.display="none"
+
+    try{
+        const snap = await db.collection("orders").where("assignedTo","==",uid).get()
+        let rows=""
+        for(const doc of snap.docs){
+            const o = doc.data()
+            if(o.status === "Delivered") continue;
+            const userDoc = await db.collection("users").doc(o.customerId).get()
+            const u = userDoc.data() || {}
+            const addr = u.address || {}
+            const fullAddress = `${addr.house||""}, ${addr.street||""}, ${addr.city||""} - ${addr.pincode||""}`
+            rows+=`
+            <tr>
+            <td>${u.name||""}</td>
+            <td>${u.phone||""}</td>
+            <td>${o.bottles}</td>
+            <td>${fullAddress}</td>
+            <td>
+            <button class="success-btn" onclick="markDelivered('${doc.id}')">Mark Delivered</button>
+            </td>
+            </tr>`
+        }
+
+        document.getElementById("mainContent").innerHTML = `
+        <div style="width:100%;padding:40px 20px;display:flex;justify-content:center;">
+        <div style="width:100%;max-width:1100px;">
+        <div style="background:rgba(255,255,255,0.15);backdrop-filter:blur(15px);padding:30px;border-radius:20px;width:100%;box-shadow:0 10px 35px rgba(0,0,0,0.3);text-align:center;">
+        <h2 style="margin-bottom:25px;">Assigned Orders</h2>
+        <div style="width:100%;overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;text-align:center;min-width:800px;">
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.3);">
+        <th style="padding:14px;">Name</th>
+        <th style="padding:14px;">Phone</th>
+        <th style="padding:14px;">Bottles</th>
+        <th style="padding:14px;">Address</th>
+        <th style="padding:14px;">Action</th>
+        </tr>
+        ${rows||"<tr><td colspan='5' style='padding:20px;'>No Orders Assigned</td></tr>"}
+        </table>
+        </div></div></div></div>`
+    }catch(error){
+        console.error("Assigned orders error:", error);
+        document.getElementById("mainContent").innerHTML = `
+        <div style="display:flex;justify-content:center;padding:40px;">
+        <div style="background:rgba(255,255,255,0.15);padding:30px;border-radius:20px;text-align:center;max-width:500px;width:100%;">
+        <h2>No Assigned Orders</h2>
+        <p style="opacity:0.8;margin-top:10px;">You currently have no active deliveries.</p>
+        </div></div>`
+    }
+}
+
+function renderTable(title,rows){
+    document.getElementById("homeNavBtn").style.display = "none";
+    document.getElementById("heroSection").style.display="none"
+    document.querySelector(".carousel-container").style.display="none"
+
+    document.getElementById("mainContent").innerHTML=`
+    <div class="dashboard-card">
+    <h2 style="margin-bottom:20px;text-align:center;">${title}</h2>
+    <table style="width:100%;border-collapse:collapse;text-align:center;min-width:800px;">
+    <tr>
+    <th>Name</th>
+    <th>Phone</th>
+    <th>Bottles</th>
+    <th>Total</th>
+    <th>Action</th>
+    </tr>
+    ${rows||"<tr><td colspan='5'>No Orders</td></tr>"}
+    </table>
+    </div>`
+}
+
+async function markDelivered(id) {
+    await db.collection("orders").doc(id).update({ status: "Delivered" });
+    const allButtons = document.querySelectorAll('button');
+    allButtons.forEach(btn => {
+        if (btn.getAttribute('onclick') === `markDelivered('${id}')`) {
+            const row = btn.closest('tr');
+            if (row) {
+                row.style.transition = "0.5s";
+                row.style.opacity = "0"; 
+                setTimeout(() => row.remove(), 500); 
+            }
+        }
+    });
+}
+
+// --- PWA INSTALL PROMPT ---
+let deferredPrompt;
+window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const installBtn = document.createElement("button");
+    installBtn.innerText = "Install App";
+    installBtn.className = "primary-btn";
+    installBtn.style.marginTop = "20px";
+    
+    // Safety check in case .hero is hidden by other functions
+    const heroSection = document.querySelector(".hero");
+    if(heroSection) {
+        heroSection.appendChild(installBtn);
+        installBtn.addEventListener("click", async () => {
+            installBtn.style.display = "none";
+            deferredPrompt.prompt();
+            await deferredPrompt.userChoice;
+            deferredPrompt = null;
+        });
+    }
+});
+
+// --- SERVICE WORKER REGISTRATION ---
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js")
+            .then(() => console.log("PWA Service Worker Registered"))
+            .catch(err => console.log("SW registration failed", err));
+    });
+}
+</script>
+
+</body>
+</html>
